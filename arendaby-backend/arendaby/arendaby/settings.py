@@ -26,9 +26,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # apps
     'housing',
+    'country',
     # libs
     'corsheaders',
-    'rest_framework'
+    'rest_framework',
+    'django_rename_app'
 ]
 
 MIDDLEWARE = [
@@ -79,8 +81,14 @@ WSGI_APPLICATION = 'arendaby.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        # 'ENGINE': 'django.db.backends.sqlite3',
+        # 'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'arendaby_db',
+        'USER': 'postgres',
+        'PASSWORD': '010203Vv',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 
