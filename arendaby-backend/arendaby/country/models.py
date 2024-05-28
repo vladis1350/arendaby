@@ -12,3 +12,17 @@ class Country(models.Model):
     def __str__(self):
         return self.name
 
+
+class City(models.Model):
+    name = models.CharField(max_length=100)
+    description = models.TextField(null=True, blank=True, verbose_name='Описание города')
+    country = models.ForeignKey(Country, on_delete=models.CASCADE, related_name='cities')
+
+    class Meta:
+        verbose_name = "Город"
+        verbose_name_plural = "Города"
+
+    def __str__(self):
+        return self.name
+
+

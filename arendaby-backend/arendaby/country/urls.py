@@ -1,6 +1,7 @@
 from django.urls import path
+from .views import CountryList, CityList
 
 urlpatterns = [
-    # path('parse/', MenuItemList.as_view(), name='menu-list'),
-    # path('ideas/', VocationIdeasList.as_view(), name='ideas-list'),
+    path('country/', CountryList.as_view(), name='county list'),
+    path('city/', CityList.as_view(), name='city list'),
 ]
