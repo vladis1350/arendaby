@@ -1,0 +1,43 @@
+.ideas-block {
+    position: absolute;
+    /*max-height: 350px;*/
+    /*max-width: 100%;*/
+}
+
+.card-text {
+    font-size: 12px;
+}
+
+.img-ideas {
+    display: inline-block;
+    position: relative;
+    max-width: 100%;
+    max-height: 350px;
+    object-fit: cover;
+}
+
+.img-ideas-tg {
+    position: absolute;
+}
+
+.card-body {
+    position: absolute;
+}
+
+
+
+.link-ideas {
+    text-decoration: none;
+    /*display: block;*/
+}
+
+/*.img-ideas:hover {*/
+/*    height: 450px;*/
+/*    position: absolute;*/
+/*    display: inline-block;*/
+/*    !*max-width: 400px;*!*/
+/*}*/
+
+.vocation-ideas-title {
+    padding-bottom: 25px;
+}
