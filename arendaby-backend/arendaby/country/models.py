@@ -16,6 +16,7 @@ class Country(models.Model):
 class City(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(null=True, blank=True, verbose_name='Описание города')
+    # image = models.ImageField('Изображение', upload_to='cities/', blank=True, null=True)
     country = models.ForeignKey(Country, on_delete=models.CASCADE, related_name='cities')
 
     class Meta:
@@ -24,5 +25,3 @@ class City(models.Model):
 
     def __str__(self):
         return self.name
-
-
