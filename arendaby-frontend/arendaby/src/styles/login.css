@@ -1,0 +1,12 @@
+.login-form {
+    margin: 0 auto;
+    padding-top: 50px;
+}
+
+.login-form-title {
+    text-align: center;
+}
+
+.btn-login-form {
+    margin: 0 10px;
+}

@@ -1,7 +1,5 @@
 .ideas-block {
-    position: absolute;
-    /*max-height: 350px;*/
-    /*max-width: 100%;*/
+    position: static;
 }
 
 .card-text {
@@ -23,8 +21,6 @@
 .card-body {
     position: absolute;
 }
-
-
 
 .link-ideas {
     text-decoration: none;
