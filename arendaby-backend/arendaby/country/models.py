@@ -4,6 +4,7 @@ from django.db import models
 class Country(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(null=True, blank=True, verbose_name='Описание')
+    image = models.ImageField('Изображение', upload_to='countries/', blank=True, null=True)
 
     class Meta:
         verbose_name = "Страна"
@@ -16,7 +17,7 @@ class Country(models.Model):
 class City(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(null=True, blank=True, verbose_name='Описание города')
-    # image = models.ImageField('Изображение', upload_to='cities/', blank=True, null=True)
+    image = models.ImageField('Изображение', upload_to='cities/', blank=True, null=True)
     country = models.ForeignKey(Country, on_delete=models.CASCADE, related_name='cities')
 
     class Meta:
