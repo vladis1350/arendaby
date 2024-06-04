@@ -26,3 +26,15 @@ class City(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class CityPhotos(models.Model):
+    city = models.ForeignKey(City, on_delete=models.CASCADE, related_name='city')
+    photo_url = models.ImageField(verbose_name='Photos of cities')
+
+    class Meta:
+        verbose_name = "Изображение города"
+        verbose_name_plural = "Изображения городов"
+
+    def __str__(self):
+        return self.city.name

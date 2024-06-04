@@ -26,7 +26,7 @@ class CitiesListByCountry(generics.ListAPIView):
     def list(self, request, *args, **kwargs):
         id_country = super().get_object().id
         if not id_country:
-            return Response({"error": "Brand name is required."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "Country name is required."}, status=status.HTTP_400_BAD_REQUEST)
 
         country = Country.objects.get(pk=id_country)
         citiesList = City.objects.filter(country=country)

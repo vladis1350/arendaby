@@ -9,6 +9,7 @@ urlpatterns = [
     path('api/', include('housing.urls')),
     path('api/', include('country.urls')),
     path('api/', include('user.urls')),
+    path('api/', include('apartment.urls')),
     path('api-auth/', include('rest_framework.urls')),
 
     path('api/token', TokenObtainPairView.as_view(), name='get_token'),
