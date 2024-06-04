@@ -1,0 +1,29 @@
+.countries-block {
+    position: static;
+}
+
+.countries-title {
+    margin: 0 auto;
+    text-align: center;
+    padding-top: 50px;
+    padding-bottom: 20px;
+}
+
+.country-name {
+    color: #9ad7ec;
+    opacity: unset;
+}
+
+.country-card-text {
+    background-color: #0e1e02;
+    opacity: .8;
+    padding: 5px 5px 5px 15px;
+    margin-left: 15px;
+    position: relative;
+    top: -25px;
+}
+
+.number-options {
+    position: relative;
+    top: 25px;
+}

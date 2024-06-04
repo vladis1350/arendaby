@@ -1,5 +1,5 @@
 import React from "react";
-import "../../bootstrap.min.css"
+import "../../styles/bootstrap.min.css"
 import "./header.css"
 
 export default function HeaderInfo() {
