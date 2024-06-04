@@ -7,6 +7,7 @@ import Register from "./pages/Register";
 import NotFound from "./pages/NotFound";
 import Home from "./pages/Home";
 import City from "./pages/city/city";
+import Apartment from "./pages/apartment/apartment";
 
 
 function Logout() {
@@ -36,6 +37,7 @@ class App extends Component {
                     <Route path="/logout" element={<Logout/>}/>
                     <Route path="/register" element={<RegisterAndLogout/>}/>
                     <Route path="/country/:country/:id" element={<City/>}/>
+                    <Route path="/apartment/city/:city" element={<Apartment/>}/>
                     <Route path="*" element={<NotFound/>}/>
                 </Routes>
             </BrowserRouter>
