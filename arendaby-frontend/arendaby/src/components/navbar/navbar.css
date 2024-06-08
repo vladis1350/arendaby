@@ -1,3 +1,7 @@
 .login-btn {
     text-align: right;
 }
+
+.navbar {
+    position: fixed;
+}

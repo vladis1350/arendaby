@@ -36,7 +36,7 @@ export default function VocationIdeas() {
                             <Link className="link-ideas" to={item.link}>
                                 <h6 className="card-header">{item.title}</h6>
                                 <img src={item.image} alt="Тут картинка"
-                                     className="d-block user-select-none img-ideas"/>
+                                     className="d-block"/>
                                 <div className="card-body">
                                     <p className="card-text">{item.info}</p>
                                 </div>
