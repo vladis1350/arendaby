@@ -1,5 +1,7 @@
 .countries-block {
     position: static;
+    overflow: hidden;
+    z-index: 999;
 }
 
 .countries-title {
@@ -14,14 +16,20 @@
     opacity: unset;
 }
 
-.country-card-text {
+.item-name-card-text {
     background-color: #0e1e02;
     opacity: .8;
     padding: 5px 5px 5px 15px;
     margin-left: 15px;
     position: relative;
     top: -25px;
+    z-index: 111;
 }
+
+/*.item-name-card-text:hover {*/
+/*    transition: .5s linear;*/
+/*    opacity: unset;*/
+/*}*/
 
 .number-options {
     position: relative;

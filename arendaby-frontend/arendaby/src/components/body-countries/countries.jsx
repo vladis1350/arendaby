@@ -28,8 +28,8 @@ export default function Countries() {
         return (
             <Link to={`${to}/${param}`} style={{textDecoration: 'none'}}>
                 <img src={item.image} alt="Тут картинка"
-                     className="d-block user-select-none img-ideas"/>
-                <h3 className="country-card-text"><span className="country-name">{item.name}</span></h3>
+                     className="d-block img-item-block"/>
+                <h3 className="item-name-card-text"><span className="country-name">{item.name}</span></h3>
             </Link>
         );
     };
@@ -56,7 +56,7 @@ export default function Countries() {
                 {countries.map(item => (
                     // getCities(item.id),
                     <div className="col-3 col-item">
-                        <div className="mb-3">
+                        <div className="mb-3 countries-block">
                             <CountryLink to="/country" param={item.name + "/" + item.id} item={item}/>
                         </div>
                     </div>

@@ -8,3 +8,26 @@ td.cities-left-block {
 td.cities-main-block {
     width: 100%;
 }
+
+.city-name {
+    color: #90bf6b;
+}
+
+.city-block {
+    position: static;
+    overflow: hidden;
+    z-index: 999;
+}
+
+.img-item-block:hover {
+    transform: rotate(0deg) scale(1.16, 1.16);
+    transition: transform 300ms linear 0ms, box-shadow 300ms linear 0ms, z-index 300ms linear 0ms;
+    cursor: pointer;
+    z-index: 1;
+}
+
+.city-name:hover {
+    color: #90bf6b;
+    opacity: unset;
+    transition: .2s linear;
+}
