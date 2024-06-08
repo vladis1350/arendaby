@@ -5,7 +5,7 @@ from .models import MenuItem, VocationIdeas
 
 @admin.register(MenuItem)
 class MenuItemAdmin(admin.ModelAdmin):
-    list_display = ("id", "name")
+    list_display = ("id", "name", )
     ordering = ["name"]
 
 

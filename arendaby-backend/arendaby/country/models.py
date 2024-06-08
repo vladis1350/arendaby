@@ -30,7 +30,7 @@ class City(models.Model):
 
 class CityPhotos(models.Model):
     city = models.ForeignKey(City, on_delete=models.CASCADE, related_name='city')
-    photo_url = models.ImageField(verbose_name='Photos of cities')
+    photo_url = models.ImageField(verbose_name='Photos of cities', upload_to='cities/', blank=True, null=True)
 
     class Meta:
         verbose_name = "Изображение города"
