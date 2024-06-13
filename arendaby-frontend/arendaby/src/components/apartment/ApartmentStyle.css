@@ -1,0 +1,29 @@
+.city-search {
+    max-width: 450px;
+}
+
+.datatimePicker {
+    color: #fcfcfd;
+}
+
+.search-result {
+    background-color: #fcfcfd;
+    text-align: left;
+}
+
+.search-result ul {
+    list-style-image: url('track.png');
+    padding-top: 10px;
+    margin-bottom: 10px;
+}
+
+.search-result ul li span {
+    position: relative;
+    top: -10px;
+}
+
+.apart-filter-panel {
+    padding-top: 25px;
+    width: 70%;
+    margin: 0 auto;
+}

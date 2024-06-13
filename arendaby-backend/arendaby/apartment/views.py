@@ -19,16 +19,36 @@ class ApartmentByCityViewList(generics.ListAPIView):
     permission_classes = [AllowAny, ]
 
     def list(self, request, *args, **kwargs):
-        city_name = self.kwargs.get('city')
-        if not city_name:
+        city_id = self.kwargs.get('city_id')
+        if not city_id:
             return Response({"error": "City name is required."}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            city = City.objects.get(name=city_name)
+            city = City.objects.get(pk=city_id)
         except City.DoesNotExist:
             return Response({"error": "City not found."}, status=status.HTTP_404_NOT_FOUND)
 
         apartmentList = Apartment.objects.filter(city=city)
+        serializer = self.get_serializer(apartmentList, many=True)
+        return Response(serializer.data, status.HTTP_200_OK)
+
+
+class SearchingApartmentsList(generics.ListAPIView):
+    queryset = Apartment.objects.all()
+    serializer_class = ApartmentSerializer
+    permission_classes = [AllowAny, ]
+
+    def list(self, request, *args, **kwargs):
+        city_name = request.GET.get('term')
+        if not city_name:
+            return Response({"error": "City name is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            city = City.objects.get(name__icontains=city_name)
+        except City.DoesNotExist:
+            return Response({"error": "City not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        apartmentList = Apartment.objects.filter(city=city.id)
         serializer = self.get_serializer(apartmentList, many=True)
         return Response(serializer.data, status.HTTP_200_OK)
 
@@ -68,7 +88,6 @@ class ApartmentPhotoByApartmentViewList(generics.ListAPIView):
         apartment_id = super().get_object().id
         if not apartment_id:
             return Response({"error": "Apartment is required."}, status=status.HTTP_400_BAD_REQUEST)
-
         try:
             apartment = Apartment.objects.get(pk=apartment_id)
         except Apartment.DoesNotExist:
@@ -77,3 +96,20 @@ class ApartmentPhotoByApartmentViewList(generics.ListAPIView):
         apartmentPhotos = ApartmentPhoto.objects.filter(apartment=apartment)
         serializer = self.get_serializer(apartmentPhotos, many=True)
         return Response(serializer.data, status.HTTP_200_OK)
+
+# class ApartmentSearchingViewList(generics.ListAPIView):
+#     queryset = Apartment.objects.all()
+#     serializer_class = ApartmentSerializer
+#     permission_classes = [AllowAny, ]
+#
+#     def list(self, request, *args, **kwargs):
+#         apart_name = self.kwargs.get('apartment')
+#         if not apart_name:
+#             return Response({"error": "Type name is required."}, status=status.HTTP_400_BAD_REQUEST)
+#
+#         try:
+#             apartment = Apartment.objects.get(type_name=apart_name)
+#             serializer = self.get_serializer(apartment, many=True)
+#             return Response(serializer.data, status.HTTP_200_OK)
+#         except Apartment.DoesNotExist:
+#             return Response({"error": "Apartment not found."}, status=status.HTTP_404_NOT_FOUND)

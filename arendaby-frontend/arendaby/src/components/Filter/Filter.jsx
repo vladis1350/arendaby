@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import api from "../../api";
+import {api} from "../../services/Api";
 
 export default function Filter() {
     const [apartment_type, setApartmentType] = useState([])

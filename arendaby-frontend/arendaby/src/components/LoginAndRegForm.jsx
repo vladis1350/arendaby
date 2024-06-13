@@ -1,10 +1,10 @@
 import React, {Fragment, useState} from "react";
 import {useNavigate} from "react-router-dom";
-import api from "../api";
+import {api} from "../services/Api"
 import {ACCESS_TOKEN, REFRESH_TOKEN} from "../constants";
 import Navbar from "./navbar/navbar";
-import "../styles/bootstrap.min.css"
-import "../styles/login.css"
+import "../styles/bootstrap.min.css";
+import "../styles/login.css";
 import LoadingIndicator from "./LoadingIndicator";
 
 export default function Form({route, method}) {

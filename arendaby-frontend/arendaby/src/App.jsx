@@ -32,7 +32,7 @@ class App extends Component {
                     <Route path="/logout" element={<Logout/>}/>
                     <Route path="/register" element={<RegisterAndLogout/>}/>
                     <Route path="/country/:country/:id" element={<City/>}/>
-                    <Route path="/apartment/city/:city" element={<Apartment/>}/>
+                    <Route path="/apartment/city/:id" element={<Apartment/>}/>
                     <Route path="/rent-out" element={<RentOut/>}/>
                     <Route path="/reservation" element={<Reservations/>}/>
                     <Route path="/favorites" element={<Favorites/>}/>
