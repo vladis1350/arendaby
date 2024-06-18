@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {Link} from 'react-router-dom';
 import "./ideas.css"
-import api from "../../api";
+import {api} from "../../services/Api";
 
 export default function VocationIdeas() {
     const [ideas, setVocationIdeas] = useState([]);

@@ -2,7 +2,7 @@ import "../../styles/bootstrap.min.css"
 import "./city.css"
 import React, {Fragment, useEffect, useState} from "react";
 import Menu from "../../components/navbar/navbar";
-import api from "../../api";
+import {getCities} from "../../services/Api";
 import {Link, useParams} from "react-router-dom";
 
 export default function City() {
@@ -10,20 +10,14 @@ export default function City() {
     // const  country = useParams();
     const {country, id} = useParams();
 
-    useEffect(() => {
-        getCities(id)
-    }, []);
-
-    const getCities = (id) => {
-        api
-            .get(`/api/cities/${id}`)
-            .then((res) => res.data)
-            .then((data) => {
-                setCityList(data);
-                console.log(data);
-            })
-            .catch((err) => console.log(err))
+    const fetchCities = async () => {
+        const resp = await getCities(id);
+        setCityList(resp.data);
     }
+
+    useEffect(() => {
+        fetchCities()
+    }, []);
 
     const CityLink = ({to, param, item}) => {
         return (
@@ -56,7 +50,8 @@ export default function City() {
                                 {city.map(item => (
                                     <div className="col-sm-4 city-block">
                                         <div className="mb-3">
-                                            <CityLink className="city-name" to='/apartment/city/' param={item.name} item={item}/>
+                                            <CityLink className="city-name" to='/apartment/city/' param={item.id}
+                                                      item={item}/>
                                         </div>
                                     </div>
                                 ))}

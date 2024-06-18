@@ -7,7 +7,7 @@ from .serializers import MenuItemSerializer, VocationIdeasSerializer
 class MenuItemList(generics.ListAPIView):
     queryset = MenuItem.objects.all()
     serializer_class = MenuItemSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [AllowAny, ]
 
 
 class UpdateMenuItem(generics.UpdateAPIView):
@@ -19,4 +19,4 @@ class UpdateMenuItem(generics.UpdateAPIView):
 class VocationIdeasList(generics.ListAPIView):
     queryset = VocationIdeas.objects.all()
     serializer_class = VocationIdeasSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [AllowAny, ]

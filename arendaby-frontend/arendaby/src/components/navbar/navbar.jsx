@@ -1,6 +1,8 @@
 import React, {useEffect, useState} from "react";
 import "../../styles/bootstrap.min.css"
-import api from "../../api";
+import {api} from "../../services/Api";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
 
 function Menu() {
     const [menuItems, setMenuItems] = useState([]);
