@@ -6,20 +6,29 @@
     color: #fcfcfd;
 }
 
-.search-result {
+.search-result-normal {
     background-color: #fcfcfd;
+    visibility: hidden;
     text-align: left;
 }
 
-.search-result ul {
+.search-result-focused {
+    background-color: #fcfcfd;
+    visibility: visible;
+    text-align: left;
+    color: #0e1e02;
+}
+
+.search-result-focused ul {
     list-style-image: url('track.png');
     padding-top: 10px;
     margin-bottom: 10px;
 }
 
-.search-result ul li span {
+.search-result-focused ul li span {
     position: relative;
-    top: -10px;
+    top: -7px;
+    cursor: pointer;
 }
 
 .apart-filter-panel {

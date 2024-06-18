@@ -13,6 +13,15 @@ export default function HeaderFormFilter() {
     const [apartment, setApartment] = useState([]);
     const [city, setCity] = useState([]);
     const [value, onChange] = useState(new Date());
+    const [isSearchFocused, setIsSearchFocused] = useState(false);
+
+    const handleSearchFocus = () => {
+        setIsSearchFocused(true);
+    };
+
+    const handleSearchBlur = () => {
+        setIsSearchFocused(false);
+    };
 
     const fetchApartments = async (e) => {
         setSearchTerm(e.target.value);
@@ -44,7 +53,8 @@ export default function HeaderFormFilter() {
                 <div className="col-5">
                     <input className="form-control form-control-lg city-search"
                            type="Куда едем" placeholder="Курорт, город или адрес"
-                           value={searchTerm} onChange={fetchApartments}/>
+                           value={searchTerm} onChange={fetchApartments} onFocus={handleSearchFocus}
+                           onBlur={handleSearchBlur}/>
                 </div>
                 <div className="col-6">
                     <div className="datatimePicker">
@@ -54,10 +64,10 @@ export default function HeaderFormFilter() {
                 </div>
             </div>
             <div className="row">
-                <div className="col-6 search-result">
+                <div className={isSearchFocused ? "col-6 search-result-focused" : "col-6 search-result-normal"}>
                     <ul>
                         {apartment.map(result => (
-                            <li key={result.id}><span>{result.city.name}, {result.name}</span></li>
+                            <li key={result.id}><span>{result.name}</span></li>
                         ))}
                     </ul>
                 </div>
