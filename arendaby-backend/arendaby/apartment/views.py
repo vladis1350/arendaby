@@ -50,6 +50,7 @@ class SearchingApartmentsList(generics.ListAPIView):
 
         apartmentList = Apartment.objects.filter(city=city.id)
         serializer = self.get_serializer(apartmentList, many=True)
+
         return Response(serializer.data, status.HTTP_200_OK)
 
 
