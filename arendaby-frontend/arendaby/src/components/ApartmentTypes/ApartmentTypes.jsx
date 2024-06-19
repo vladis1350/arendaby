@@ -1,7 +1,7 @@
-import {useEffect, useState} from "react";
+import {Fragment, useEffect, useState} from "react";
 import {getApartmentTypes} from "../../services/Api";
 
-export default function ApartmentTypes(group_id) {
+export default function ApartmentTypes({group_id}) {
     const [apartmentType, setApartmentType] = useState([])
 
     const fetchApartmentType = async () => {
@@ -16,7 +16,17 @@ export default function ApartmentTypes(group_id) {
     }
 
     useEffect(() => {
-        getApartmentTypes()
+        fetchApartmentType()
     }, []);
 
+    return (
+        <Fragment>
+            {apartmentType.map(type => (
+                <div className="col-3">
+                    <input type='radio' value={type.type_name}/>{type.type_name}
+                </div>
+            ))
+            }
+        </Fragment>
+    );
 }

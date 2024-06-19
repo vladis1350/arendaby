@@ -32,7 +32,7 @@ export const getGroupApartmentType = async  () =>
     api.get("/api/apartment/groups/");
 
 export const getApartmentTypes = async (group_id) =>
-    api.get("/api/apartment/types")
+    api.get(`/api/apartment/types/${group_id}`)
 // api.interceptors.request.use(
 //     (config) => {
 //

@@ -1,13 +1,29 @@
 import React, {Fragment, useEffect, useState} from "react";
 import Navbar from "../../components/navbar/navbar";
 import "./Rent.css"
-import {getGroupApartmentType} from "../../services/Api";
+import {getApartmentTypes, getGroupApartmentType} from "../../services/Api";
 
 
 export default function Rent() {
     const [selectedBlock, setSelectedBlock] = useState(null);
-    const [groupApartmentType, setGroupApartmentType] = useState([])
+    const [groupApartmentType, setGroupApartmentType] = useState([]);
+    const [apartmentType, setApartmentType] = useState([]);
+    const [radioValue, setRadioValue] = useState('');
 
+    const handleClickOnGroupBlock = (id) => {
+        setSelectedBlock(id);
+        fetchApartmentType(id);
+    }
+    const fetchApartmentType = async (id) => {
+        try {
+            const response = await getApartmentTypes(id);
+            if (response.status === 200) {
+                setApartmentType(response.data);
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    }
     const fetchGroupApartmentTypes = async () => {
         try {
             const response = await getGroupApartmentType();
@@ -17,6 +33,10 @@ export default function Rent() {
         } catch (err) {
             console.log(err);
         }
+    }
+
+    const selectApartmentType = (type_id) => {
+        setRadioValue(type_id)
     }
 
     useEffect(() => {
@@ -36,7 +56,8 @@ export default function Rent() {
                 <div className="row">
                     <h5>Что будете сдавать?</h5>
                     {groupApartmentType.map(group => (
-                        <div className="col-lg-3" onClick={() => setSelectedBlock(group.id)}>
+                        <div className="col-lg-3"
+                             onClick={() => handleClickOnGroupBlock(group.id)}>
                             <div className="type-apartment">
                                 <p>{group.group_name}</p>
                                 <p className="inf">{group.short_info}</p>
@@ -48,12 +69,18 @@ export default function Rent() {
                     ))}
                 </div>
                 <div className="row">
-                    <div>
-                        {selectedBlock === 1 && <div className="info">1</div>}
-                        {selectedBlock === 2 && <div className="info">2</div>}
-                        {selectedBlock === 3 && <div className="info">3</div>}
-                        {selectedBlock === 4 && <div className="info">4</div>}
-                    </div>
+                    {apartmentType.map(type => (
+                        <div className="col-3 ">
+                            <div className="apart-type-block" onClick={() => selectApartmentType(type.id)}>
+                                <div className="my-radio-block">
+                                    <input type='radio' value={type.id} checked={radioValue === type.id}
+                                           onChange={() => {
+                                           }}/> {type.type_name}
+                                </div>
+                            </div>
+                        </div>
+                    ))
+                    }
                 </div>
             </div>
         </Fragment>
