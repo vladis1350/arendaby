@@ -11,6 +11,7 @@ urlpatterns = [
     path('api/', include('country.urls')),
     path('api/', include('user.urls')),
     path('api/', include('apartment.urls')),
+    path('api/', include('rent.urls')),
     path('api-auth/', include('rest_framework.urls')),
 
     path('api/token/', UserLoginView.as_view(), name='get_token'),

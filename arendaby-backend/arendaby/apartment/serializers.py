@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import ApartmentType, Apartment, ApartmentPhoto
+from .models import ApartmentType, Apartment, ApartmentPhoto, GroupApartmentType
 
 
 class ApartmentTypeSerializer(serializers.ModelSerializer):
@@ -20,3 +20,8 @@ class ApartmentPhotoSerializer(serializers.ModelSerializer):
         model = ApartmentPhoto
         fields = "__all__"
 
+
+class GroupApartmentTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = GroupApartmentType
+        fields = "__all__"

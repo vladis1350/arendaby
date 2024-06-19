@@ -78,7 +78,7 @@ export default function UserProfile() {
     return (
         <Fragment>
             <Navbar/>
-            <div className="container profile-main-block">
+            <div className="container">
                 <div className="row">
                     <div className="col-3 profile-left-block">
                         <div className="avatar-block">

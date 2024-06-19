@@ -26,6 +26,13 @@ export const verifyToken = async (token) =>
 
 export const getRefreshToken = async (refresh) =>
     api.post("/api/token/refresh/", refresh);
+
+
+export const getGroupApartmentType = async  () =>
+    api.get("/api/apartment/groups/");
+
+export const getApartmentTypes = async (group_id) =>
+    api.get("/api/apartment/types")
 // api.interceptors.request.use(
 //     (config) => {
 //

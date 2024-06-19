@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'country',
     'user',
     'apartment',
+    'rent',
     # libs
     'corsheaders',
     'rest_framework',
