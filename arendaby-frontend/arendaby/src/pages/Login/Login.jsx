@@ -45,59 +45,19 @@ export default function Login() {
     return (
         <Fragment>
             <Navbar/>
-            {/*<div className="container">*/}
-            {/*    <div className="form__login">*/}
-            {/*        <div className="login-header">*/}
-            {/*            <h1>Войти</h1>*/}
-            {/*        </div>*/}
-            {/*        <form className="login-form" onSubmit={handleSubmit}>*/}
-            {/*            <div className="login-name">*/}
-            {/*                <h3>Имя пользователя:</h3>*/}
-            {/*                <input*/}
-            {/*                    className="login__input-name"*/}
-            {/*                    type="text"*/}
-            {/*                    id="username"*/}
-            {/*                    value={username}*/}
-            {/*                    placeholder="Имя пользователя"*/}
-            {/*                    onChange={(e) => setUsername(e.target.value)}*/}
-            {/*                    required*/}
-            {/*                />*/}
-            {/*            </div>*/}
-            {/*            <div className="login-password">*/}
-            {/*                <h3>Пароль:</h3>*/}
-            {/*                <input*/}
-            {/*                    className="login__input-password"*/}
-            {/*                    type="password"*/}
-            {/*                    id="password"*/}
-            {/*                    value={password}*/}
-            {/*                    placeholder="Пароль"*/}
-            {/*                    onChange={(e) => setPassword(e.target.value)}*/}
-            {/*                    required*/}
-            {/*                />*/}
-            {/*            </div>*/}
-            {/*            <br/>*/}
-            {/*            <div className="login-submit">*/}
-            {/*                <button type="submit">Войти</button>*/}
-            {/*            </div>*/}
-            {/*            <Link className="login-register" to="/register">*/}
-            {/*                Регистрация*/}
-            {/*            </Link>*/}
-            {/*        </form>*/}
-            {/*    </div>*/}
-            {/*</div>*/}
             <div className="col-md-4 login-form">
                 <form onSubmit={handleSubmit}>
                     <fieldset>
                         <legend className='login-form-title'>Авторизация</legend>
                         <div>
-                            <label className="form-label mt-4">Username</label>
+                            <label className="form-label mt-4">Логин</label>
                             <input type="text" className="form-control"
                                    value={username}
                                    onChange={(e) => setUsername(e.target.value)}
                                    placeholder="Username"/>
                         </div>
                         <div>
-                            <label className="form-label mt-4">Password</label>
+                            <label className="form-label mt-4">Пароль</label>
                             <input type="password" className="form-control"
                                    value={password}
                                    onChange={(e) => setPassword(e.target.value)}

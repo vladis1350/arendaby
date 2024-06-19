@@ -5,7 +5,25 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
 
-from .serializers import UserRegisterSerializer, UserTokenSerializer
+from .models import UserProfile
+from .serializers import UserRegisterSerializer, UserTokenSerializer, UserProfileSerializer, UserSerializer
+
+
+class UsersListView(generics.ListAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = (AllowAny,)
+
+
+class UserDetailView(generics.RetrieveAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+
+class UsersProfileListView(generics.ListAPIView):
+    queryset = UserProfile.objects.all()
+    serializer_class = UserProfileSerializer
+    permission_classes = (AllowAny,)
 
 
 class UserRegisterView(generics.CreateAPIView):

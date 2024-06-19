@@ -1,0 +1,73 @@
+.rent-header {
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 40px;
+}
+
+.type-apartment {
+    background-color: #fff3cd;
+    position: relative;
+    padding-left: 15px;
+    padding-right: 15px;
+    width: 100%;
+    height: 100px;
+    cursor: pointer;
+}
+
+.footer-type-apartment {
+    padding: 0;
+    margin: 5px;
+    text-align: justify;
+    line-height: 10px;
+}
+
+.footer-type-apartment span {
+    color: #20c997;
+    padding: 0;
+    margin: 0;
+    font-size: 12px;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.type-apartment p {
+    padding: 20px 10px 0 10px;
+    margin: 0;
+    font-size: 16px;
+}
+
+.type-apartment p.inf {
+    color: #8c8c8c;
+    padding: 0 10px 0 10px;
+    font-size: 14px;
+    margin: 0;
+}
+
+.rent-row {
+    margin: 0 auto;
+}
+
+.container-rent {
+    padding-left: 100px;
+    padding-right: 100px;
+    display: inline-block;
+}
+
+.apart-type-block {
+    background-color: #fff3cd;
+    position: relative;
+    padding-left: 15px;
+    padding-right: 15px;
+    width: 100%;
+    height: 50px;
+    cursor: pointer;
+}
+
+.my-radio-block {
+    padding: 10px 5px;
+    margin-top: 5px;
+}
+
+.my-radio-block input {
+    margin-right: 5px;
+    cursor: pointer;
+}

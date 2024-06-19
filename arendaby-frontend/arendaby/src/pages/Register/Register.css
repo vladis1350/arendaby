@@ -14,25 +14,23 @@
     text-align: center;
 }
 
-.reg-submit{
-    text-align: center;
-}
+/*.reg-submit{*/
+/*    text-align: center;*/
+/*}*/
 
 .login-register{
     margin-top: 20px;
 }
 
-.username-row, .email-row, .pass-row {
-    margin-top: 5px;
-    margin-bottom: 5px;
+.form-control {
+    width: 400px;
 }
 
 .form {
     margin-top: 20px;
-    margin-left: 50px;
+    margin-left: 30%;
     display: flex;
     flex-direction: column;
-    /*align-items: ;*/
 }
 
 form button {

@@ -3,8 +3,9 @@ from rest_framework import generics, status
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
-from .models import Apartment, ApartmentType, ApartmentPhoto
-from .serializers import ApartmentSerializer, ApartmentPhotoSerializer, ApartmentTypeSerializer
+from .models import Apartment, ApartmentType, ApartmentPhoto, GroupApartmentType
+from .serializers import ApartmentSerializer, ApartmentPhotoSerializer, ApartmentTypeSerializer, \
+    GroupApartmentTypeSerializer
 
 
 class ApartmentViewList(generics.ListAPIView):
@@ -98,19 +99,28 @@ class ApartmentPhotoByApartmentViewList(generics.ListAPIView):
         serializer = self.get_serializer(apartmentPhotos, many=True)
         return Response(serializer.data, status.HTTP_200_OK)
 
-# class ApartmentSearchingViewList(generics.ListAPIView):
-#     queryset = Apartment.objects.all()
-#     serializer_class = ApartmentSerializer
-#     permission_classes = [AllowAny, ]
-#
-#     def list(self, request, *args, **kwargs):
-#         apart_name = self.kwargs.get('apartment')
-#         if not apart_name:
-#             return Response({"error": "Type name is required."}, status=status.HTTP_400_BAD_REQUEST)
-#
-#         try:
-#             apartment = Apartment.objects.get(type_name=apart_name)
-#             serializer = self.get_serializer(apartment, many=True)
-#             return Response(serializer.data, status.HTTP_200_OK)
-#         except Apartment.DoesNotExist:
-#             return Response({"error": "Apartment not found."}, status=status.HTTP_404_NOT_FOUND)
+
+class GroupApartmentTypeList(generics.ListAPIView):
+    queryset = GroupApartmentType.objects.all()
+    serializer_class = GroupApartmentTypeSerializer
+    permission_classes = (AllowAny,)
+
+
+class ApartmentTypeByGroupIdViewList(generics.ListAPIView):
+    queryset = ApartmentType.objects.all()
+    serializer_class = ApartmentTypeSerializer
+    permission_classes = [AllowAny, ]
+
+    def list(self, request, *args, **kwargs):
+        group_id = self.kwargs.get('group_id')
+        if not group_id:
+            return Response({"error": "Group is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            group_apartment_type = GroupApartmentType.objects.get(pk=group_id)
+        except GroupApartmentType.DoesNotExist:
+            return Response({"error": "Group apartment type not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        apartmentTypeList = ApartmentType.objects.filter(group=group_apartment_type)
+        serializer = self.get_serializer(apartmentTypeList, many=True)
+        return Response(serializer.data, status.HTTP_200_OK)

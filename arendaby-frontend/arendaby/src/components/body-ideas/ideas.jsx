@@ -31,7 +31,7 @@ export default function VocationIdeas() {
             </div>
             <div className="row ideas-row">
                 {ideas.map(item => (
-                    <div className="col-sm col-item">
+                    <div className="col-sm">
                         <div className="card ideas-block mb-3">
                             <Link className="link-ideas" to={item.link}>
                                 <h6 className="card-header">{item.title}</h6>

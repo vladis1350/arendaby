@@ -2,8 +2,23 @@ from country.models import City
 from django.db import models
 
 
+class GroupApartmentType(models.Model):
+    group_name = models.CharField(max_length=50)
+    short_info = models.CharField(max_length=70, default=" ")
+    descriptions = models.TextField(null=True, blank=True, verbose_name='Описание группы')
+
+    class Meta:
+        verbose_name = "Группа видов арендного жилья"
+        verbose_name_plural = "Группы видов арендного жилья"
+
+    def __str__(self):
+        return self.group_name
+
+
 class ApartmentType(models.Model):
     type_name = models.CharField(max_length=100, unique=True, null=False, verbose_name="Тип апартаментов")
+    group = models.ForeignKey(GroupApartmentType, on_delete=models.CASCADE, verbose_name="Группа типов апартаментов",
+                              default=None)
 
     class Meta:
         verbose_name = "Тип апартаментов"
