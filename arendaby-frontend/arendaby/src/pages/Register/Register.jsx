@@ -1,4 +1,4 @@
-import {useCallback, useState} from "react";
+import React, {useCallback, useState} from "react";
 import {Link, Navigate, useNavigate} from "react-router-dom";
 // context
 import {useDispatch, useSelector} from "react-redux";
@@ -85,62 +85,55 @@ export default function Register() {
                     <h1>Регистрация</h1>
                 </div>
                 <form className="form" onSubmit={handleSubmit}>
-                    <div className="row username-row">
+                    <div className="row">
+                        <label className="form-label mt-2">Имя пользователя:</label>
                         <div className="col-sm-3">
-                            <span>Имя пользователя:</span>
-                        </div>
-                        <div className="col-sm-3">
-                            <input
-                                type="text"
-                                id="username"
-                                name="username"
-                                value={formData.username}
-                                onChange={handleChange}
-                                required
+                            <input className="form-control"
+                                   type="text"
+                                   id="username"
+                                   name="username"
+                                   value={formData.username}
+                                   onChange={handleChange}
+                                   required
                             />
                         </div>
                     </div>
-                    <div className="row email-row">
+                    <div className="row">
+                        <label className="form-label mt-2">Почта:</label>
                         <div className="col-sm-3">
-                            <span>Почта:</span>
-                        </div>
-                        <div className="col-sm-3">
-                            <input
-                                type="text"
-                                id="email"
-                                name="email"
-                                value={formData.email}
-                                onChange={handleChange}
-                                required
+                            <input className="form-control"
+                                   type="text"
+                                   id="email"
+                                   name="email"
+                                   value={formData.email}
+                                   onChange={handleChange}
+                                   required
                             />
                         </div>
                     </div>
-                    <div className="row pass-row">
+                    <div className="row">
+                        <label className="form-label mt-2">Пароль:</label>
                         <div className="col-sm-3">
-                            <span>Пароль:</span></div>
-                        <div className="col-sm-3">
-                            <input
-                                type="password"
-                                id="password"
-                                name="password"
-                                value={formData.password}
-                                onChange={handleChange}
-                                required
+                            <input className="form-control"
+                                   type="password"
+                                   id="password"
+                                   name="password"
+                                   value={formData.password}
+                                   onChange={handleChange}
+                                   required
                             />
                         </div>
                     </div>
-                    <div className="row pass-row">
+                    <div className="row">
+                        <label className="form-label mt-2">Повторите пароль:</label>
                         <div className="col-sm-3">
-                            <span>Повторите пароль:</span>
-                        </div>
-                        <div className="col-sm-3">
-                            <input
-                                type="password"
-                                id="password2"
-                                name="password2"
-                                value={formData.password2}
-                                onChange={handleChange}
-                                required
+                            <input className="form-control"
+                                   type="password"
+                                   id="password2"
+                                   name="password2"
+                                   value={formData.password2}
+                                   onChange={handleChange}
+                                   required
                             />
                         </div>
                     </div>

@@ -3,10 +3,13 @@ import "../../styles/bootstrap.min.css"
 import {api} from "../../services/Api";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
+import {useSelector} from "react-redux";
 
 function Menu() {
     const [menuItems, setMenuItems] = useState([]);
     const [status, setStatus] = useState(null);
+    const {isLoggedIn, userId, token, refreshToken} = useSelector(
+        (state) => state.auth);
 
     useEffect(() => {
         getMenu();

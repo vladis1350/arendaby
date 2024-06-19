@@ -14,6 +14,7 @@ import {verifyToken} from "./services/Api";
 import {login, logout} from "./Redux/authReducer";
 import {useDispatch, useSelector} from "react-redux";
 import {showMessageInfo} from "./Redux/messagesReducer";
+import UserProfile from "./pages/UserProfile/UserProfile";
 
 
 function Logout() {
@@ -44,7 +45,7 @@ export default function App() {
                     }
                 } catch (error) {
                     if (error.response && error.response.status === 401) {
-                        dispatch(logout());
+                        // dispatch(logout());
                         return <Navigate to="/login"/>;
                     }
                 }
@@ -68,6 +69,7 @@ export default function App() {
                 <Route path="/" element={<Home/>}/>
                 <Route path="/login" element={<Login/>}/>
                 <Route path="/logout" element={<Logout/>}/>
+                <Route path="/profile" element={<UserProfile/>}/>
                 <Route path="/register" element={<Register/>}/>
                 <Route path="/country/:country/:id" element={<City/>}/>
                 <Route path="/apartment/city/:id" element={<Apartment/>}/>
