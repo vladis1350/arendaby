@@ -44,7 +44,7 @@ export default function HeaderFormFilter() {
         if (response === undefined) {
             return;
         }
-        setApartment(response.data);
+        setCity(response.data);
     };
 
     return (
@@ -53,7 +53,7 @@ export default function HeaderFormFilter() {
                 <div className="col-5">
                     <input className="form-control form-control-lg city-search"
                            type="Куда едем" placeholder="Курорт, город или адрес"
-                           value={searchTerm} onChange={fetchApartments} onFocus={handleSearchFocus}
+                           value={searchTerm} onChange={fetchCity} onFocus={handleSearchFocus}
                            onBlur={handleSearchBlur}/>
                 </div>
                 <div className="col-6">
@@ -66,7 +66,7 @@ export default function HeaderFormFilter() {
             <div className="row">
                 <div className={isSearchFocused ? "col-6 search-result-focused" : "col-6 search-result-normal"}>
                     <ul>
-                        {apartment.map(result => (
+                        {city.map(result => (
                             <li key={result.id}><span>{result.name}</span></li>
                         ))}
                     </ul>
