@@ -2,7 +2,7 @@ import "./Carousel.css"
 import {Children, cloneElement, useEffect, useState} from "react";
 import {FaChevronLeft, FaChevronRight} from 'react-icons/fa';
 
-const PAGE_WIDTH = 300
+const PAGE_WIDTH = 350
 export const Carousel = ({children}) => {
     const [pages, setPages] = useState([])
     const [offset, setOffset] = useState(0)
@@ -37,7 +37,7 @@ export const Carousel = ({children}) => {
 
     return (
         <div className="main-container">
-            <FaChevronLeft className="arrow" onClick={handleLeftArrowClick}/>
+            <FaChevronLeft className="arrow arrow-left" onClick={handleLeftArrowClick}/>
             <div className="window">
                 <div className="all-pages-container"
                      style={{
@@ -46,7 +46,7 @@ export const Carousel = ({children}) => {
                     {pages}
                 </div>
             </div>
-            <FaChevronRight className="arrow" onClick={handleRightArrowClick}/>
+            <FaChevronRight className="arrow arrow-right" onClick={handleRightArrowClick}/>
         </div>
     )
 }

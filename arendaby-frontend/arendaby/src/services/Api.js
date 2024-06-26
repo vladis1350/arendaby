@@ -28,20 +28,19 @@ export const getRefreshToken = async (refresh) =>
     api.post("/api/token/refresh/", refresh);
 
 
-export const getGroupApartmentType = async  () =>
+export const getGroupApartmentType = async () =>
     api.get("/api/apartment/groups/");
 
 export const getApartmentTypes = async (group_id) =>
-    api.get(`/api/apartment/types/${group_id}`)
-// api.interceptors.request.use(
-//     (config) => {
-//
-//         return config
-//     },
-//     (error) => {
-//         return Promise.reject(error);
-//     }
-// );
+    api.get(`/api/apartment/types/${group_id}`);
+
+export const getApartmentById = async (id) =>
+    api.get(`/api/apartment/${id}`);
+
+export const createApartment = async (data) => {
+    const cfg = {headers: {"Content-Type": "multipart/form-data"}};
+    return api.post("/api/apartment/create/", data, cfg);
+}
 
 export const getCities = async (id) =>
     api.get(`/api/cities/${id}`);

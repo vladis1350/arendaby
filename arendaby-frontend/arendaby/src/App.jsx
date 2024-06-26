@@ -15,6 +15,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {showMessageInfo} from "./Redux/messagesReducer";
 import UserProfile from "./pages/UserProfile/UserProfile";
 import Rent from "./pages/Rent/Rent";
+import ViewApartmentDetail from "./pages/apartment/ViewApartmentDetail";
 
 
 function Logout() {
@@ -73,6 +74,7 @@ export default function App() {
                 <Route path="/register" element={<Register/>}/>
                 <Route path="/country/:country/:id" element={<City/>}/>
                 <Route path="/apartment/city/:id" element={<Apartment/>}/>
+                <Route path="/apartment/:apart_id" element={<ViewApartmentDetail/>}/>
                 <Route path="/reservation" element={<Reservations/>}/>
                 <Route path="/favorites" element={<Favorites/>}/>
                 <Route path="/rent-out" element={<Rent/>}/>

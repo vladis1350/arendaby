@@ -1,3 +1,11 @@
+/*.first-step {*/
+/*    transition: width 1s, height 1s;*/
+/*}*/
+
+.search-city-item:hover {
+    background-color: #fff3cd;
+}
+
 .rent-header {
     text-align: center;
     margin-top: 20px;
@@ -70,4 +78,59 @@
 .my-radio-block input {
     margin-right: 5px;
     cursor: pointer;
+}
+
+.rent-city-block {
+    padding-top: 15px;
+}
+
+.rent-city-block .input-city {
+    text-align: center;
+    align-items: center;
+}
+
+.rent-city-block .input-city input {
+    width: 350px;
+    padding-left: 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.rent-city-block .input-city span {
+    padding-right: 10px;
+}
+
+.btn-next {
+    text-align: center;
+    background-color: #ffefef;
+    margin: 15px auto;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+.address-block {
+    padding-top: 20px;
+    text-align: center;
+    /*padding-left: 50px;*/
+}
+
+.address-block-form {
+    padding-left: 70px;
+}
+
+.btn-secondary {
+    margin: 0 25px;
+}
+
+.form-label {
+    display: flex;
+}
+
+.form-select {
+    width: 400px;
+}
+
+.load-apart-photo {
+    text-align: center;
+    padding-top: 25px;
 }

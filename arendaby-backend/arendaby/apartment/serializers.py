@@ -1,4 +1,8 @@
+from country.models import City
+from country.serializers import CitySerializer
 from rest_framework import serializers
+from user.models import User
+from user.serializers import UserSerializer
 
 from .models import ApartmentType, Apartment, ApartmentPhoto, GroupApartmentType
 
@@ -9,16 +13,62 @@ class ApartmentTypeSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class ApartmentSerializer(serializers.ModelSerializer):
+class LandlordApartmentSerializer(serializers.ModelSerializer):
+    image = serializers.ImageField(source='profile.image', read_only=True)
+    phone = serializers.CharField(source='profile.phone', read_only=True)
+
     class Meta:
-        model = Apartment
-        fields = "__all__"
+        model = User
+        fields = ('id', 'username', 'image', 'phone',)
 
 
 class ApartmentPhotoSerializer(serializers.ModelSerializer):
     class Meta:
         model = ApartmentPhoto
-        fields = "__all__"
+        fields = ("image", "apartment",)
+
+
+class ApartmentSerializer(serializers.ModelSerializer):
+    type = ApartmentTypeSerializer(required=False)
+    city = CitySerializer(required=False)
+    images = ApartmentPhotoSerializer(source="apartmentphoto_set", many=True)
+    landlord = UserSerializer(required=False)
+
+    class Meta:
+        model = Apartment
+        fields = (
+            'id', 'type', 'city', 'landlord', 'images', 'name', 'address', 'sleeping_places', 'price', 'descriptions',)
+
+
+class ApartmentCreateSerializer(serializers.ModelSerializer):
+    type = serializers.CharField(source='type.id')
+    city = serializers.CharField(source='city.name')
+    landlord = serializers.CharField(source="user.id")
+    images = serializers.ListField(source="apartmentphoto_set", child=serializers.ImageField())
+
+    class Meta:
+        model = Apartment
+        fields = ("type", "city", "landlord", "images", "name", "address", "sleeping_places", "price", "descriptions",)
+
+    def create(self, validated_data):
+        images = validated_data.pop('apartmentphoto_set')
+        type_id = validated_data.pop('type')['id']
+        city_name = validated_data.pop('city')['name']
+        landlord_id = validated_data.pop('user')['id']
+        # address = validated_data.pop('address')['streetName']
+        # numberHouse = validated_data.pop('')
+        # address = validated_data.pop('address')['streetName']
+
+        type_obj = ApartmentType.objects.get(pk=type_id)
+        city_obj = City.objects.get(name=city_name)
+        landlord_obj = User.objects.get(pk=landlord_id)
+
+        apartment = Apartment.objects.create(type=type_obj, city=city_obj, landlord=landlord_obj, **validated_data)
+        for image in images:
+            print(image)
+            ApartmentPhoto.objects.create(apartment=apartment, image=image)
+
+        return apartment
 
 
 class GroupApartmentTypeSerializer(serializers.ModelSerializer):

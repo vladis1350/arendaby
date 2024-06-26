@@ -1,8 +1,6 @@
 import React, {useEffect, useState} from "react";
 import "../../styles/bootstrap.min.css"
 import {api} from "../../services/Api";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
 import {useSelector} from "react-redux";
 
 function Menu() {
@@ -27,7 +25,7 @@ function Menu() {
     }
 
     const getStatus = () => {
-        api.get("/api/token")
+        api.get("/api/token/")
             .then(res => {
                 setStatus(res.status)
             })
@@ -45,16 +43,11 @@ function Menu() {
                 </button>
                 <div className="collapse navbar-collapse" id="navbarColor02">
                     <ul className="navbar-nav me-auto">
-                        {menuItems.map(item => {
-                            getStatus()
-                                if (status === 200 && item.name === "Войти")
-                                    return <li className="nav-item">
-                                                <a className="nav-link" href="/logout">Выйти</a>
-                                            </li>
-                                return <li className="nav-item">
-                                            <a className="nav-link" key={item.id} href={item.link}>{item.name}</a>
-                                        </li>
-                            }
+                        {menuItems.map(item => (
+                                <li className="nav-item">
+                                    <a className="nav-link" key={item.id} href={item.link}>{item.name}</a>
+                                </li>
+                            )
                         )}
                     </ul>
                 </div>

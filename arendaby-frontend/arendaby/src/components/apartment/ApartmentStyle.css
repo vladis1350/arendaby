@@ -13,6 +13,7 @@
 }
 
 .search-result-focused {
+    margin-top: 5px;
     background-color: #fcfcfd;
     visibility: visible;
     text-align: left;
