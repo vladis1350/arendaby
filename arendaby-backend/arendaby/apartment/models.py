@@ -1,5 +1,6 @@
 from country.models import City
 from django.db import models
+from user.models import User
 
 
 class GroupApartmentType(models.Model):
@@ -39,6 +40,8 @@ class Apartment(models.Model):
     descriptions = models.TextField(null=True, blank=True, verbose_name='Описание апартаментов')
     created = models.DateTimeField(auto_now_add=True, verbose_name='Создан')
     updated = models.DateTimeField(auto_now=True, verbose_name='Обновлен')
+    landlord = models.ForeignKey(User, on_delete=models.CASCADE, related_name="landlord", verbose_name="Адендадатель",
+                                 default=False)
 
     class Meta:
         verbose_name = "Апартаменты"
@@ -50,7 +53,7 @@ class Apartment(models.Model):
 
 class ApartmentPhoto(models.Model):
     image = models.ImageField(verbose_name="Фото апартаментов", upload_to='apartments/', blank=True, null=True)
-    apartment = models.ForeignKey(Apartment, on_delete=models.CASCADE, related_name='apartments',
+    apartment = models.ForeignKey(Apartment, on_delete=models.CASCADE, related_name='apartmentphoto_set',
                                   verbose_name="Апартаменты")
 
     class Meta:

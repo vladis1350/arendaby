@@ -5,7 +5,7 @@ from rest_framework.response import Response
 
 from .models import Apartment, ApartmentType, ApartmentPhoto, GroupApartmentType
 from .serializers import ApartmentSerializer, ApartmentPhotoSerializer, ApartmentTypeSerializer, \
-    GroupApartmentTypeSerializer
+    GroupApartmentTypeSerializer, ApartmentCreateSerializer
 
 
 class ApartmentViewList(generics.ListAPIView):
@@ -106,6 +106,20 @@ class GroupApartmentTypeList(generics.ListAPIView):
     permission_classes = (AllowAny,)
 
 
+class RentApartmentView(generics.CreateAPIView):
+    queryset = Apartment.objects.all()
+    serializer_class = ApartmentCreateSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = ApartmentCreateSerializer(data=request.data)
+        print(request.data)
+        print(serializer)
+        if serializer.is_valid():
+            apartment = serializer.save()
+            return Response(status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 class ApartmentTypeByGroupIdViewList(generics.ListAPIView):
     queryset = ApartmentType.objects.all()
     serializer_class = ApartmentTypeSerializer
@@ -124,3 +138,21 @@ class ApartmentTypeByGroupIdViewList(generics.ListAPIView):
         apartmentTypeList = ApartmentType.objects.filter(group=group_apartment_type)
         serializer = self.get_serializer(apartmentTypeList, many=True)
         return Response(serializer.data, status.HTTP_200_OK)
+
+
+class ApartmentById(generics.RetrieveAPIView):
+    queryset = Apartment
+    serializer_class = ApartmentSerializer
+    permission_classes = (AllowAny,)
+
+    def get(self, request, *args, **kwargs):
+        apart_id = self.kwargs.get('apart_id')
+        try:
+            apartment = Apartment.objects.get(pk=apart_id)
+        except Apartment.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        serializer = ApartmentSerializer(apartment)
+        return Response(serializer.data)
+
+
