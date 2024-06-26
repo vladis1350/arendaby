@@ -1,3 +1,11 @@
+/*.first-step {*/
+/*    transition: width 1s, height 1s;*/
+/*}*/
+
+.search-city-item:hover {
+    background-color: #fff3cd;
+}
+
 .rent-header {
     text-align: center;
     margin-top: 20px;

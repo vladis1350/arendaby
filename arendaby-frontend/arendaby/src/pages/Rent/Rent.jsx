@@ -1,28 +1,41 @@
 import React, {Fragment, useEffect, useState} from "react";
 import Navbar from "../../components/navbar/navbar";
 import "./Rent.css"
-import {api, getApartmentTypes, getGroupApartmentType} from "../../services/Api";
+import {api, createApartment, getApartmentTypes, getGroupApartmentType} from "../../services/Api";
 import {useDropzone} from 'react-dropzone';
-import {useSelector} from "react-redux";
+import {useSelector, useDispatch} from "react-redux";
 import {NotAuth} from "../../components/Auth/NotAuth";
+import {showMessageInfo} from "../../Redux/messagesReducer";
 
 
 export default function Rent() {
+    const dispatch = useDispatch();
     const {isLoggedIn, userId, token, refreshToken} = useSelector(
         (state) => state.auth);
     const [groupApartmentType, setGroupApartmentType] = useState([]);
     const [apartmentType, setApartmentType] = useState([]);
-    const [radioValue, setRadioValue] = useState('');
     const [isHidden, setIsHidden] = useState(true);
     const [stepRent, setStepRent] = useState(1)
-    const [selectedStreetType, setStreetType] = useState("")
     const [isSearchFocused, setIsSearchFocused] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [userCity, setUserCity] = useState([]);
-    const [streetName, setStreetName] = useState("");
-    const [numberHouse, setNumberHouse] = useState("");
-    const [numberCorpus, setNumberCorpus] = useState("");
     const [loadedFiles, setLoadedFiles] = useState([]);
+    const [apartData, setApartData] = React.useState({
+        type: "",
+        city: "",
+        landlord: userId,
+        images: [],
+        name: "",
+        address: "",
+        sleeping_places: "",
+        price: "",
+        // numberHouse: "",
+        // numberCorpus: "",
+        // selectedStreetType: "",
+        descriptions: "",
+    });
+    const [previewImages, setPreviewImages] = React.useState([]);
+
     const onDrop = (acceptedFiles) => {
 
         acceptedFiles.forEach((file) => {
@@ -31,20 +44,50 @@ export default function Rent() {
         });
     }
 
+    const handleFileChange = (event) => {
+        const selectedFiles = Array.from(event.target.files);
+        setApartData((prevState) => ({
+            ...prevState,
+            images: [...prevState.images, ...selectedFiles],
+        }))
+
+        const imageUrls = selectedFiles.map((file) => URL.createObjectURL(file));
+        setPreviewImages((prevImages) => [...prevImages, ...imageUrls]);
+    };
+
+    const handleReset = () => {
+        setApartData({images: []});
+        setPreviewImages([]);
+    };
+
+    const submitApartData = async () => {
+        const formDataToSend = new FormData();
+        Object.entries(apartData).forEach(([key, value]) => {
+            if (key === "images") {
+                value.forEach((photo, index) => {
+                    formDataToSend.append(`images[${index}]`, photo);
+                });
+            } else {
+                formDataToSend.append(key, value);
+            }
+        });
+        const response = await createApartment(formDataToSend);
+        if (response.status === 201) {
+            dispatch(
+                showMessageInfo({type: "success", text: "Объявление создано"})
+            );
+            handleReset();
+        } else {
+            dispatch(
+                showMessageInfo({
+                    type: "error",
+                    text: "Произошла ошибка при создании объявления",
+                })
+            );
+        }
+    }
+
     const {getRootProps, getInputProps} = useDropzone({onDrop});
-
-    const handleStreetName = (e) => {
-        setStreetName(e.target.value)
-    }
-
-    const handleNumberHouse = (e) => {
-        setNumberHouse(e.target.value)
-    }
-
-    const handleNumberCorpus = (e) => {
-        setNumberCorpus(e.target.value)
-    }
-
 
     const fetchCity = async (e) => {
         setSearchTerm(e.target.value);
@@ -102,13 +145,22 @@ export default function Rent() {
         }
     }
 
-    const selectApartmentType = (type) => {
-        setRadioValue(type.id)
+    const handleChange = async (event) => {
+        const {name, value} = event.target;
+        setApartData((prev) => ({...prev, [name]: value}));
+        if (searchTerm !== "") {
+            setApartData((prev) => ({...prev, ["city"]: searchTerm}))
+        }
     }
 
-    const handleSelectStreetType = (e) => {
-        setStreetType(e.target.value)
+    const selectApartmentType = (type) => {
+        setApartData((prev) => ({...prev, ["type"]: type.id}))
     }
+
+    const handleSelectCity = (item) => {
+        setSearchTerm(item)
+        handleSearchBlur();
+    };
 
     useEffect(() => {
         fetchGroupApartmentTypes();
@@ -124,12 +176,16 @@ export default function Rent() {
         maxWidth: '400px',
     };
 
+    const transitionBlock = {
+        transition: "width 1s, height 1s",
+    }
+
     return (
         <Fragment>
             <Navbar/>
             {!isLoggedIn && <NotAuth/>}
             {isLoggedIn && stepRent === 1 &&
-                <div className="container">
+                <div className="container" style={transitionBlock}>
                     <div className="row">
                         <div className="col rent-header">
                             <h3>Сдавайте своё жильё на ArendaBy</h3>
@@ -156,7 +212,8 @@ export default function Rent() {
                             <div className="col-3 ">
                                 <div className="apart-type-block" onClick={() => selectApartmentType(type)}>
                                     <div className="my-radio-block">
-                                        <input type='radio' value={type.id} checked={radioValue === type.id}
+                                        <input type='radio' value={type.id}
+                                               checked={apartData.type === type.id}
                                                onChange={() => {
                                                }}/> {type.type_name}
                                     </div>
@@ -176,13 +233,16 @@ export default function Rent() {
                                 <span>Город</span>
                                 <input className="form-control form-control-md city-search"
                                        type="Куда едем" placeholder="Курорт, город или адрес"
+                                       name="city"
                                        value={searchTerm} onChange={fetchCity} onFocus={handleSearchFocus}
-                                       onBlur={handleSearchBlur}/>
+                                />
                                 <div
                                     className={isSearchFocused ? "col-6 search-result-focused" : "col-6 search-result-normal"}>
                                     <ul>
                                         {userCity.map(result => (
-                                            <li key={result.id}><span>{result.name}</span></li>
+                                            <li className={"search-city-item"}
+                                                onClick={() => handleSelectCity(result.name)}>
+                                                <span>{result.name}</span></li>
                                         ))}
                                     </ul>
                                 </div>
@@ -202,14 +262,13 @@ export default function Rent() {
             {stepRent === 2 &&
                 <div className="container">
                     <div className="row">
-                        <div className={"col address-block"}><h5><strong>Адрес</strong></h5></div>
+                        <div className={"col rent-header"}><h5><strong>Адрес</strong></h5></div>
                     </div>
                     <div className="row">
                         <div className={"col-3"}></div>
                         <div className="col-6 address-block-form">
                             <label className="form-label mt-4">Тип улицы</label>
-                            <select className="form-select" value={selectedStreetType}
-                                    onChange={handleSelectStreetType}>
+                            <select className="form-select" name="selectedStreetType">
                                 <option>Улица</option>
                                 <option>Бульвар</option>
                                 <option>Переулок</option>
@@ -217,14 +276,12 @@ export default function Rent() {
                                 <option>Другое</option>
                             </select>
                             <label className={"form-label mt-2"}>Название улицы</label>
-                            <input type="text" value={streetName} className="form-control"
-                                   onChange={handleStreetName}/>
+                            <input type="text" name="address" value={apartData.address} className="form-control"
+                                   onChange={handleChange} required/>
                             <label className={"form-label mt-2"}>Дом</label>
-                            <input type="text" value={numberHouse} className="form-control"
-                                   onChange={handleNumberHouse}/>
+                            <input type="text" name="numberHouse" className="form-control"/>
                             <label className={"form-label mt-2"}>Корпус</label>
-                            <input type="text" value={numberCorpus} className="form-control"
-                                   onChange={handleNumberCorpus}/>
+                            <input type="text" name="numberCorpus" className="form-control"/>
                         </div>
                         <div className={"col-3"}></div>
                     </div>
@@ -242,19 +299,43 @@ export default function Rent() {
                 <div className={"content"}>
                     <div className={"row"}>
                         <div className={"col-3"}></div>
-                        <div className={"col-6 load-apart-photo"}>
+                        <div className={"col-6 rent-header"}>
                             <h3>Загрузите фото своих апартаментов</h3>
                             <div>
                                 <p className="form-label mt-4">
                                     Помните, что первое фото будут видеть ваши гости при поиске жилья.
                                 </p>
+                                <input
+                                    type="file"
+                                    name="images"
+                                    multiple
+                                    onChange={handleFileChange}
+                                    required
+                                />
                                 {/*<input className="form-control" type="file"/>*/}
-                                <div {...getRootProps()} style={dropzoneStyles}>
-                                    <input {...getInputProps()} />
-                                    <p>Перетащите сюда файлы или кликните, чтобы выбрать</p>
-                                </div>
-                                {loadedFiles.map(f => (
-                                    <div>{f.name}</div>
+                                {/*<div {...getRootProps()} style={dropzoneStyles}>*/}
+                                {/*    <input {...getInputProps()} />*/}
+                                {/*    <p>Перетащите сюда файлы или кликните, чтобы выбрать</p>*/}
+                                {/*</div>*/}
+                                {/*{loadedFiles.map(f => (*/}
+                                {/*    <div>{f.name}</div>*/}
+                                {/*))}*/}
+                            </div>
+                            <div>
+                                {previewImages.map((image, index) => (
+                                    <>
+                                        <img
+                                            key={index}
+                                            src={image}
+                                            alt={`Preview ${index}`}
+                                            style={{width: "200px", height: "200px"}}
+                                            onClick={() =>
+                                                setPreviewImages((prevImages) =>
+                                                    prevImages.filter((_, i) => i !== index)
+                                                )
+                                            }
+                                        />
+                                    </>
                                 ))}
                             </div>
                         </div>
@@ -263,6 +344,67 @@ export default function Rent() {
                     <div className="col-6 btn-next">
                         <button type="button" className="btn btn-secondary" onClick={prevStep}>Назад</button>
                         <button type="button" className="btn btn-info" onClick={nextStep}>Продолжить</button>
+                    </div>
+                </div>
+            }
+            {stepRent === 4 &&
+                <div className={"container"}>
+                    <div className="row">
+                        <div className={"col rent-header"}><h5><strong>Общие сведения</strong></h5></div>
+                    </div>
+                    <div className={"row"}>
+                        <div className={"col-3"}></div>
+                        <div className={"col-6"}>
+                            <label className={"form-label mt-2"}>Название апартаментов</label>
+                            <input type="text" name="name" value={apartData.name} className="form-control"
+                                   onChange={handleChange} required/>
+                            <label className={"form-label mt-2"}>Количество спальных мест</label>
+                            <input type="text" name="sleeping_places" value={apartData.sleeping_places}
+                                   className="form-control"
+                                   onChange={handleChange} required/>
+                            <label className={"form-label mt-2"}>Цена за сутки</label>
+                            <input type="text" name="price" value={apartData.price} className="form-control"
+                                   onChange={handleChange} required/>
+                            <label className={"form-label mt-2"}>Описание</label>
+                            <textarea name="descriptions" value={apartData.descriptions} className="form-control"
+                                      onChange={handleChange} required/>
+                        </div>
+                        <div className={"col-3"}></div>
+                    </div>
+                    <div className="col-6 btn-next">
+                        <button type="button" className="btn btn-secondary" onClick={prevStep}>Назад</button>
+                        <button type="button" className="btn btn-info" onClick={nextStep}>Продолжить</button>
+                    </div>
+                </div>
+            }
+            {stepRent === 5 &&
+                <div className={"container"}>
+                    <div className={"row"}>
+                        <div className={"col rent-header"}><h3><strong>Подтверждение данных</strong></h3></div>
+                    </div>
+                    <div className={"row"}>
+                        <div className={"col-3"}></div>
+                        <div className={"col-6"}>
+                            <p><strong>Тип апартаментов:</strong> {apartData.selectedApartType}</p>
+                            <p><strong>Город:</strong> {apartData.city}</p>
+                            <p><strong>Тип улицы:</strong> {apartData.selectedStreetType}</p>
+                            <p><strong>Название улицы:</strong> {apartData.address}</p>
+                            <p><strong>Номер дома:</strong> {apartData.numberHouse}</p>
+                            <p><strong>Номер корпуса:</strong> {apartData.numberCorpus}</p>
+                            <p><strong>Арендадатель:</strong> {userId}</p>
+                            <p><strong>Название:</strong> {apartData.name}</p>
+                            <p><strong>Количество спальных мест:</strong> {apartData.sleeping_places}</p>
+                            <p><strong>Цена за сутки:</strong> {apartData.price}</p>
+                            <p><strong>Описание:</strong> {apartData.descriptions}</p>
+                        </div>
+                        <div className={"col-3"}></div>
+                    </div>
+                    <div className={"row"}>
+                        <div className="col-6 btn-next">
+                            <button type="button" className="btn btn-secondary" onClick={prevStep}>Назад</button>
+                            <button type="button" className="btn btn-info" onClick={submitApartData}>Разместить</button>
+                            {/*<button type="button" className="btn btn-info" onClick={nextStep}>Продолжить</button>*/}
+                        </div>
                     </div>
                 </div>
             }
