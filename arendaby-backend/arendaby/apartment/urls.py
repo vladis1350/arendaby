@@ -2,7 +2,7 @@ from django.urls import path
 
 from .views import (ApartmentViewList, ApartmentByCityViewList, ApartmentByTypeViewList, ApartmentTypeViewList,
                     ApartmentPhotoByApartmentViewList, SearchingApartmentsList, GroupApartmentTypeList,
-                    ApartmentTypeByGroupIdViewList, RentApartmentView, ApartmentById)
+                    ApartmentTypeByGroupIdViewList, RentApartmentView, ApartmentByIdView)
 
 urlpatterns = [
     path('apartment/city/get_photo/<int:pk>', ApartmentPhotoByApartmentViewList.as_view(), name='apartment_photos'),
@@ -15,6 +15,6 @@ urlpatterns = [
     path('apartment/search/', SearchingApartmentsList.as_view(), name='searching-city'),
     path('apartment/groups/', GroupApartmentTypeList.as_view(), name='group_type_apartment'),
     path('apartment/create/', RentApartmentView.as_view(), name='create_apartment'),
-    path('apartment/<int:apart_id>', ApartmentById.as_view(), name='get_apartment'),
+    path('apartment/<int:apart_id>', ApartmentByIdView.as_view(), name='get_apartment'),
     # path('apartment/search/?term=<str:apartment>', ApartmentSearchingViewList.as_view(), name='county list'),
 ]

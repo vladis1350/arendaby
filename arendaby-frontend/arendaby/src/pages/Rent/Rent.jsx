@@ -26,7 +26,9 @@ export default function Rent() {
         landlord: userId,
         images: [],
         name: "",
-        address: "",
+        street_name: "",
+        number_house: "",
+        number_block: "",
         sleeping_places: "",
         price: "",
         // numberHouse: "",
@@ -276,12 +278,12 @@ export default function Rent() {
                                 <option>Другое</option>
                             </select>
                             <label className={"form-label mt-2"}>Название улицы</label>
-                            <input type="text" name="address" value={apartData.address} className="form-control"
+                            <input type="text" name="street_name" value={apartData.street_name} className="form-control"
                                    onChange={handleChange} required/>
                             <label className={"form-label mt-2"}>Дом</label>
-                            <input type="text" name="numberHouse" className="form-control"/>
+                            <input type="text" name="number_house" value={apartData.number_house} className="form-control"/>
                             <label className={"form-label mt-2"}>Корпус</label>
-                            <input type="text" name="numberCorpus" className="form-control"/>
+                            <input type="text" name="number_block" value={apartData.number_block} className="form-control"/>
                         </div>
                         <div className={"col-3"}></div>
                     </div>
@@ -388,9 +390,9 @@ export default function Rent() {
                             <p><strong>Тип апартаментов:</strong> {apartData.selectedApartType}</p>
                             <p><strong>Город:</strong> {apartData.city}</p>
                             <p><strong>Тип улицы:</strong> {apartData.selectedStreetType}</p>
-                            <p><strong>Название улицы:</strong> {apartData.address}</p>
-                            <p><strong>Номер дома:</strong> {apartData.numberHouse}</p>
-                            <p><strong>Номер корпуса:</strong> {apartData.numberCorpus}</p>
+                            <p><strong>Название улицы:</strong> {apartData.street_name}</p>
+                            <p><strong>Номер дома:</strong> {apartData.number_house}</p>
+                            <p><strong>Номер корпуса:</strong> {apartData.number_block}</p>
                             <p><strong>Арендадатель:</strong> {userId}</p>
                             <p><strong>Название:</strong> {apartData.name}</p>
                             <p><strong>Количество спальных мест:</strong> {apartData.sleeping_places}</p>

@@ -37,7 +37,8 @@ class ApartmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Apartment
         fields = (
-            'id', 'type', 'city', 'landlord', 'images', 'name', 'address', 'sleeping_places', 'price', 'descriptions',)
+            'id', 'type', 'city', 'landlord', 'images', 'name', 'street_name', 'number_house', 'number_block',
+            'sleeping_places', 'price', 'descriptions',)
 
 
 class ApartmentCreateSerializer(serializers.ModelSerializer):
@@ -48,7 +49,10 @@ class ApartmentCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Apartment
-        fields = ("type", "city", "landlord", "images", "name", "address", "sleeping_places", "price", "descriptions",)
+        fields = (
+            "type", "city", "landlord", "images", "name", 'street_name', 'number_house', 'number_block',
+            "sleeping_places",
+            "price", "descriptions",)
 
     def create(self, validated_data):
         images = validated_data.pop('apartmentphoto_set')
