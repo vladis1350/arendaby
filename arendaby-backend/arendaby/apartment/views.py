@@ -140,10 +140,10 @@ class ApartmentTypeByGroupIdViewList(generics.ListAPIView):
         return Response(serializer.data, status.HTTP_200_OK)
 
 
-class ApartmentById(generics.RetrieveAPIView):
-    queryset = Apartment
+class ApartmentByIdView(generics.ListAPIView):
+    queryset = Apartment.objects.all()
     serializer_class = ApartmentSerializer
-    permission_classes = (AllowAny,)
+    permission_classes = [AllowAny, ]
 
     def get(self, request, *args, **kwargs):
         apart_id = self.kwargs.get('apart_id')
@@ -152,7 +152,5 @@ class ApartmentById(generics.RetrieveAPIView):
         except Apartment.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
-        serializer = ApartmentSerializer(apartment)
-        return Response(serializer.data)
-
-
+        serializer = self.get_serializer(apartment, many=False)
+        return Response(serializer.data, status.HTTP_200_OK)
