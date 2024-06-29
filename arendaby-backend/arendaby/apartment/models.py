@@ -30,6 +30,7 @@ class ApartmentType(models.Model):
 
 
 class Apartment(models.Model):
+    # Тип апартаментов, название и расположение расположение
     type = models.ForeignKey(ApartmentType, on_delete=models.CASCADE, related_name='types',
                              verbose_name="Тип апартаментов")
     city = models.ForeignKey(City, on_delete=models.CASCADE, related_name='cities', verbose_name="Город")
@@ -37,11 +38,22 @@ class Apartment(models.Model):
     street_name = models.CharField(max_length=200, null=False, verbose_name="Название улицы", default="-")
     number_house = models.CharField(max_length=5, null=False, verbose_name="Номер дома", default="-")
     number_block = models.CharField(max_length=5, null=False, verbose_name="Номер корпуса", default="-")
+
+    # общие сведения
+    square = models.CharField(default=1, max_length=5, verbose_name="Площадь апартаментов")
     sleeping_places = models.IntegerField(default=1, verbose_name="Спальных мест")
+    number_floor = models.IntegerField(default=1, verbose_name="Этаж")
+    count_floor = models.IntegerField(default=1, verbose_name="Количество этажей")
+    elevator = models.BooleanField(default=False, verbose_name="Наличие лифта")
+    count_room = models.IntegerField(default=1, verbose_name="Количество комнат")
     price = models.IntegerField(default=1, verbose_name="Цена за сутки")
     descriptions = models.TextField(null=True, blank=True, verbose_name='Описание апартаментов')
+
+    # когда добавлено и обновленно
     created = models.DateTimeField(auto_now_add=True, verbose_name='Создан')
     updated = models.DateTimeField(auto_now=True, verbose_name='Обновлен')
+
+    # арендодатель
     landlord = models.ForeignKey(User, on_delete=models.CASCADE, related_name="landlord", verbose_name="Адендадатель",
                                  default=False)
 

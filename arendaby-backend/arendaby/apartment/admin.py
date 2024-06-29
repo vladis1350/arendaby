@@ -11,8 +11,11 @@ class ApartmentTypeAdmin(admin.ModelAdmin):
 
 @admin.register(Apartment)
 class ApartmentAdmin(admin.ModelAdmin):
-    list_display = ("name", "type", "city", "street_name", "number_house", "number_block", "descriptions",)
-    ordering = ["type", "city", "name"]
+    list_display = (
+        "name", "type", "city", "street_name", "number_house", "number_block", "square", "number_floor", "count_floor",
+        "sleeping_places", "elevator", "count_room", "price", "descriptions",)
+    ordering = ["type", "city", "name", "square", "number_floor", "count_floor", "elevator", "count_room", "price",
+                "sleeping_places", ]
 
 
 @admin.register(ApartmentPhoto)
