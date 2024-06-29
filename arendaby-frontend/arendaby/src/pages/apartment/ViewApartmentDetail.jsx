@@ -116,10 +116,21 @@ export default function ViewApartmentDetail() {
                                             />
                                         )))}
                                 </div>
-                                <div className={"al"}>
-                                    <p>Спальных мест: {apartment.sleeping_places}</p>
-                                    <p>Описание:</p>
-                                    <p>{apartment.descriptions}</p>
+                                <div className={"container"}>
+                                    <div className={"row"}>
+                                        <div className={"col-2"}><span>Этаж : {apartment.number_floor}</span></div>
+                                        <div className={"col-2"}>
+                                            <span>Лифт : {apartment.elevator ? " Есть" : " Нет"}</span></div>
+                                        <div className={"col-2"}><span>Площадь : {apartment.square}</span></div>
+                                        <div className={"col-2"}><span>Комнат : {apartment.count_room}</span></div>
+                                    </div>
+                                    <div className={"row"}>
+                                        <div className={"col"}>
+                                            <p>Спальных мест: {apartment.sleeping_places}</p>
+                                            <p>Описание:</p>
+                                            <p>{apartment.descriptions}</p>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
