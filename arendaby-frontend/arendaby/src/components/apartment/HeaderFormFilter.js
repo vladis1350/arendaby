@@ -1,19 +1,16 @@
 import React, {useState} from 'react';
 import {api} from "../../services/Api";
-import DataTimePicker from 'react-datetime-picker';
-import 'react-datetime-picker/dist/DateTimePicker.css';
-import 'react-calendar/dist/Calendar.css';
-import 'react-clock/dist/Clock.css';
+import BookingCalendar from "../BoockingCalendar/BookingCalendar";
+import {FaSearch} from 'react-icons/fa';
 
-type ValuePiece = Date | null;
-
-type Value = ValuePiece | [ValuePiece, ValuePiece];
 export default function HeaderFormFilter() {
     const [searchTerm, setSearchTerm] = useState('');
-    const [apartment, setApartment] = useState([]);
     const [city, setCity] = useState([]);
-    const [value, onChange] = useState(new Date());
     const [isSearchFocused, setIsSearchFocused] = useState(false);
+
+    const searchInputStyle = {
+        border: "none",
+    }
 
     const handleSearchFocus = () => {
         setIsSearchFocused(true);
@@ -21,18 +18,6 @@ export default function HeaderFormFilter() {
 
     const handleSearchBlur = () => {
         setIsSearchFocused(false);
-    };
-
-    const fetchApartments = async (e) => {
-        setSearchTerm(e.target.value);
-        let response = {data: null}
-        response = await api
-            .get(`/api/apartment/search/?term=${e.target.value}`)
-            .catch(err => console.log(err));
-        if (response === undefined) {
-            return;
-        }
-        setApartment(response.data);
     };
 
     const fetchCity = async (e) => {
@@ -50,16 +35,29 @@ export default function HeaderFormFilter() {
     return (
         <div className="conatainer apart-filter-panel">
             <div className="row">
-                <div className="col-5">
-                    <input className="form-control form-control-lg city-search"
-                           type="Куда едем" placeholder="Курорт, город или адрес"
+                <div className="col-4 col-3-change">
+                    <div className={"input-wrapper"}>
+                        <input className="form-control me-md-3 city-search"
+                           type="text" placeholder="Куда едем"
+                               style={searchInputStyle}
                            value={searchTerm} onChange={fetchCity} onFocus={handleSearchFocus}
                            onBlur={handleSearchBlur}/>
+                        <label>Курорт, город или адрес</label>
+                    </div>
                 </div>
-                <div className="col-6">
-                    <div className="datatimePicker">
-                        <DataTimePicker onChange={onChange} value={value}/>
-                        <DataTimePicker onChange={onChange} value={value}/>
+                <div className="data-wrapper">
+                        <BookingCalendar/>
+                </div>
+                <div className={"guests"}>
+                    <div className={"input-wrapper-guests"}>
+                        <span className="info-guests">2 взрослых, без детей</span>
+                        <label>Гости</label>
+                    </div>
+                </div>
+                <div className={"col-2 fa-search-block"}>
+                    <div className={"search-button"}>
+                        <label>Найти</label>
+                        <FaSearch size={30} className={"fa-search"}/>
                     </div>
                 </div>
             </div>
@@ -73,6 +71,5 @@ export default function HeaderFormFilter() {
                 </div>
             </div>
         </div>
-    )
-        ;
+    );
 }

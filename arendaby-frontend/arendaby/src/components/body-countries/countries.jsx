@@ -6,23 +6,11 @@ import "./countries.css"
 
 export default function Countries() {
     const [countries, setCountryList] = useState([])
-    const [cities, setCitiesList] = useState([])
 
 
     useEffect(() => {
         getCountries();
     }, []);
-
-    const getCities = (id) => {
-        api
-            .get(`/api/cities/${id}`)
-            .then((res) => res.data)
-            .then((data) => {
-                setCitiesList(data)
-                // console.log(data)
-            })
-            .catch((err) => console.log(err))
-    }
 
     const CountryLink = ({to, param, item}) => {
         return (

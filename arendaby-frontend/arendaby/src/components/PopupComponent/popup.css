@@ -1,0 +1,63 @@
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+}
+
+.overlay .row {
+    border-bottom: #20c997 solid 1px;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    width: 350px;
+}
+
+.children-age {
+    width: 100%;
+    padding: 5px 10px;
+    border-radius: 15px;
+    border: #afd9ee solid 1px;
+    cursor: pointer;
+}
+
+.row.row-children-age {
+    transition: opacity 0.5s ease-in-out;
+    opacity: 1;
+    padding-left: 45px;
+    border-bottom: none;
+    width: 350px;
+}
+
+.overlay .row label {
+    padding: 0 10px;
+}
+
+.overlay .row span {
+    font-size: 14px;
+}
+
+.overlay .row button {
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    border: none;
+    padding: 5px 5px;
+}
+
+.overlay .row button.count-guest-apply {
+    width: 150px;
+    border-radius: 10px;
+}
+
+.popup {
+    background: white;
+    padding: 20px;
+    border-radius: 20px;
+    text-align: center;
+}
