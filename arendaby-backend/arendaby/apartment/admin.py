@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import ApartmentType, Apartment, ApartmentPhoto, GroupApartmentType
+from .models import ApartmentType, Apartment, ApartmentPhoto, GroupApartmentType, Booking
 
 
 @admin.register(ApartmentType)
@@ -28,3 +28,9 @@ class ApartmentPhotoAdmin(admin.ModelAdmin):
 class GroupApartmentTypeAdmin(admin.ModelAdmin):
     list_display = ("group_name", "short_info", "descriptions",)
     ordering = ["group_name", ]
+
+
+@admin.register(Booking)
+class BookingAdmin(admin.ModelAdmin):
+    list_display = ('apartment', 'start_booking', 'end_booking', 'total_price', 'client',)
+    ordering = ['apartment', 'start_booking', ]

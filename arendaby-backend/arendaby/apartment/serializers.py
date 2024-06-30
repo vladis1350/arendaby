@@ -4,7 +4,7 @@ from rest_framework import serializers
 from user.models import User
 from user.serializers import UserSerializer
 
-from .models import ApartmentType, Apartment, ApartmentPhoto, GroupApartmentType
+from .models import ApartmentType, Apartment, ApartmentPhoto, GroupApartmentType, Booking
 
 
 class ApartmentTypeSerializer(serializers.ModelSerializer):
@@ -80,3 +80,9 @@ class GroupApartmentTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = GroupApartmentType
         fields = "__all__"
+
+
+class BookingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Booking
+        fields = '__all__'

@@ -154,3 +154,11 @@ class ApartmentByIdView(generics.ListAPIView):
 
         serializer = self.get_serializer(apartment, many=False)
         return Response(serializer.data, status.HTTP_200_OK)
+
+
+class BookingApartmentView(generics.ListAPIView):
+    queryset = Apartment.objects.all()
+    serializer_class = ApartmentSerializer
+
+    def get(self, request, *args, **kwargs):
+        pass

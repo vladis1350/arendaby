@@ -76,3 +76,18 @@ class ApartmentPhoto(models.Model):
 
     def __str__(self):
         return self.apartment.name
+
+
+class Booking(models.Model):
+    client = models.ForeignKey(User, on_delete=models.CASCADE, related_name='client', verbose_name='Клиент',
+                               blank=False, null=False)
+    apartment = models.ForeignKey(Apartment, on_delete=models.CASCADE, related_name='apartment',
+                                  verbose_name='Апартаменты', blank=False, null=False)
+    start_booking = models.DateTimeField(verbose_name="Бронь с")
+    end_booking = models.DateTimeField(verbose_name="Бронь по")
+    isBooking = models.BooleanField(default=False)
+
+    @property
+    def total_price(self):
+        total_days = (self.end_booking - self.start_booking).days
+        return self.apartment.price * total_days
