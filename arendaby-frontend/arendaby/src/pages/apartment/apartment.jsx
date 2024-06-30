@@ -12,6 +12,7 @@ export default function Apartment() {
     const {id} = useParams();
     const [cityName, setCityName] = useState("");
     const [cityUrlImage, setCityUrlImage] = useState("");
+    const [disableLink, setDisableLink] = useState(false);
 
     const fetchCity = () => {
         api.get(`/api/city/${id}`)
@@ -58,7 +59,6 @@ export default function Apartment() {
                                         <Carousel>
                                             {item.images && item.images.length > 0 && (
                                                 item.images.map((image, index) => (
-                                                    // alert(image.image)
                                                         <img key={index} src={image.image} alt={`Image ${index}`}
                                                              className="d-block ap-img"/>
                                                     )

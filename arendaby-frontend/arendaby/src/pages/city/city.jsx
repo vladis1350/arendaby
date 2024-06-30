@@ -7,7 +7,6 @@ import {Link, useParams} from "react-router-dom";
 
 export default function City() {
     const [city, setCityList] = useState([])
-    // const  country = useParams();
     const {country, id} = useParams();
 
     const fetchCities = async () => {

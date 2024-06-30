@@ -188,7 +188,7 @@ export default function Rent() {
 
     useEffect(() => {
         fetchGroupApartmentTypes();
-    }, []);
+    }, [countRoom, countSleepingPlaces, isElevator]);
 
     const transitionBlock = {
         transition: "width 1s, height 1s",
