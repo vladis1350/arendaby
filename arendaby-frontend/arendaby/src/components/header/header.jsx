@@ -7,7 +7,7 @@ export default function HeaderInfo() {
         <div className="container header-info">
             <div className="row">
                 <div className="col-sm col-item ">
-                    <div className="alert alert-dismissible alert-light alert-block">
+                    <div className="alert alert-dismissible ">
                         <img src="http://localhost:8000/media/places/briefly-1.webp"
                              className="d-block user-select-none img-head-info" alt="aaa"/>
                         <strong>280 тысяч вариантов: квартиры, отели, гостевые дома</strong>

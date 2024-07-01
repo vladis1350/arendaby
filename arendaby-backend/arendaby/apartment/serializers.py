@@ -4,7 +4,7 @@ from rest_framework import serializers
 from user.models import User
 from user.serializers import UserSerializer
 
-from .models import ApartmentType, Apartment, ApartmentPhoto, GroupApartmentType
+from .models import ApartmentType, Apartment, ApartmentPhoto, GroupApartmentType, Booking
 
 
 class ApartmentTypeSerializer(serializers.ModelSerializer):
@@ -38,7 +38,8 @@ class ApartmentSerializer(serializers.ModelSerializer):
         model = Apartment
         fields = (
             'id', 'type', 'city', 'landlord', 'images', 'name', 'street_name', 'number_house', 'number_block',
-            'sleeping_places', 'price', 'descriptions',)
+            "square", "number_floor", "count_floor", "sleeping_places", "elevator", "count_room", "price",
+            'descriptions',)
 
 
 class ApartmentCreateSerializer(serializers.ModelSerializer):
@@ -51,8 +52,8 @@ class ApartmentCreateSerializer(serializers.ModelSerializer):
         model = Apartment
         fields = (
             "type", "city", "landlord", "images", "name", 'street_name', 'number_house', 'number_block',
-            "sleeping_places",
-            "price", "descriptions",)
+            "square", "number_floor", "count_floor", "sleeping_places", "elevator", "count_room", "price",
+            "descriptions",)
 
     def create(self, validated_data):
         images = validated_data.pop('apartmentphoto_set')
@@ -79,3 +80,9 @@ class GroupApartmentTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = GroupApartmentType
         fields = "__all__"
+
+
+class BookingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Booking
+        fields = '__all__'

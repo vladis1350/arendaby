@@ -1,4 +1,3 @@
-import Form from "../../components/LoginAndRegForm"
 import React, {Fragment, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {Link, Navigate, useNavigate} from "react-router-dom";

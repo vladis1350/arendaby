@@ -7,13 +7,15 @@ export const Carousel = ({children}) => {
     const [pages, setPages] = useState([])
     const [offset, setOffset] = useState(0)
 
-    const handleLeftArrowClick = () => {
+    const handleLeftArrowClick = (event) => {
+        event.preventDefault();
         setOffset((currentOffset) => {
             return Math.min(currentOffset + PAGE_WIDTH, 0)
         })
     }
 
-    const handleRightArrowClick = () => {
+    const handleRightArrowClick = (event) => {
+        event.preventDefault();
         setOffset((currentOffset) => {
             const newOffset = currentOffset - PAGE_WIDTH
             const maxOffset = -(PAGE_WIDTH * (pages.length - 1))

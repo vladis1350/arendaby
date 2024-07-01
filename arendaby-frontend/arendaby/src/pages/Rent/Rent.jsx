@@ -2,8 +2,7 @@ import React, {Fragment, useEffect, useState} from "react";
 import Navbar from "../../components/navbar/navbar";
 import "./Rent.css"
 import {api, createApartment, getApartmentTypes, getGroupApartmentType} from "../../services/Api";
-import {useDropzone} from 'react-dropzone';
-import {useSelector, useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {NotAuth} from "../../components/Auth/NotAuth";
 import {showMessageInfo} from "../../Redux/messagesReducer";
 
@@ -13,6 +12,7 @@ export default function Rent() {
     const {isLoggedIn, userId, token, refreshToken} = useSelector(
         (state) => state.auth);
     const [groupApartmentType, setGroupApartmentType] = useState([]);
+    const [selectedApartmentType, setSelectedApartmentType] = useState("");
     const [apartmentType, setApartmentType] = useState([]);
     const [isHidden, setIsHidden] = useState(true);
     const [stepRent, setStepRent] = useState(1)
@@ -20,6 +20,10 @@ export default function Rent() {
     const [searchTerm, setSearchTerm] = useState('');
     const [userCity, setUserCity] = useState([]);
     const [loadedFiles, setLoadedFiles] = useState([]);
+    const [isElevator, setIsElevator] = useState(false);
+    const [progress, setProgress] = useState(20);
+    const [countRoom, setCountRoom] = useState(1);
+    const [countSleepingPlaces, setSleepingPlaces] = useState(1);
     const [apartData, setApartData] = React.useState({
         type: "",
         city: "",
@@ -29,21 +33,33 @@ export default function Rent() {
         street_name: "",
         number_house: "",
         number_block: "",
-        sleeping_places: "",
+        square: 1,
+        number_floor: 1,
+        count_floor: 1,
+        elevator: false,
+        count_room: 1,
+        sleeping_places: 1,
         price: "",
-        // numberHouse: "",
-        // numberCorpus: "",
-        // selectedStreetType: "",
         descriptions: "",
     });
     const [previewImages, setPreviewImages] = React.useState([]);
 
-    const onDrop = (acceptedFiles) => {
+    const countRoomUp = () => {
+        setCountRoom(countRoom + 1)
+    }
 
-        acceptedFiles.forEach((file) => {
-            console.log(file.name);
-            setLoadedFiles([...loadedFiles, file.name]);
-        });
+    const countRoomDown = () => {
+        if (countRoom > 1)
+            setCountRoom(countRoom - 1)
+    }
+
+    const countSleepingPlacesUp = () => {
+        setSleepingPlaces(countSleepingPlaces + 1)
+    }
+
+    const countSleepingPlacesDown = () => {
+        if (countSleepingPlaces > 1)
+            setSleepingPlaces(countSleepingPlaces - 1)
     }
 
     const handleFileChange = (event) => {
@@ -89,8 +105,6 @@ export default function Rent() {
         }
     }
 
-    const {getRootProps, getInputProps} = useDropzone({onDrop});
-
     const fetchCity = async (e) => {
         setSearchTerm(e.target.value);
         let response = {data: null}
@@ -119,11 +133,18 @@ export default function Rent() {
     }
 
     const nextStep = () => {
+        if (stepRent === 4) {
+            setApartData((prev) => ({...prev, ["count_room"]: countRoom}))
+            setApartData((prev) => ({...prev, ["sleeping_places"]: countSleepingPlaces}))
+            setApartData((prev) => ({...prev, ["elevator"]: isElevator}))
+        }
         setStepRent(stepRent + 1)
+        setProgress(progress + 20)
     }
 
     const prevStep = () => {
         setStepRent(stepRent - 1)
+        setProgress(progress - 20)
     }
 
     const fetchApartmentType = async (id) => {
@@ -157,6 +178,7 @@ export default function Rent() {
 
     const selectApartmentType = (type) => {
         setApartData((prev) => ({...prev, ["type"]: type.id}))
+        setSelectedApartmentType(type.type_name)
     }
 
     const handleSelectCity = (item) => {
@@ -166,26 +188,25 @@ export default function Rent() {
 
     useEffect(() => {
         fetchGroupApartmentTypes();
-    }, []);
-
-    const dropzoneStyles = {
-        border: '2px dashed #cccccc',
-        borderRadius: '4px',
-        padding: '20px',
-        textAlign: 'center',
-        cursor: 'pointer',
-        margin: '20px auto',
-        maxWidth: '400px',
-    };
+    }, [countRoom, countSleepingPlaces, isElevator]);
 
     const transitionBlock = {
         transition: "width 1s, height 1s",
+    }
+
+    const handleElevator = () => {
+        setIsElevator(!isElevator)
     }
 
     return (
         <Fragment>
             <Navbar/>
             {!isLoggedIn && <NotAuth/>}
+            <div className="progress">
+                <div className="progress-bar bg-success" role="progressbar" style={{width: `${progress}%`,}}
+                     aria-valuenow="25"
+                     aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
             {isLoggedIn && stepRent === 1 &&
                 <div className="container" style={transitionBlock}>
                     <div className="row">
@@ -215,9 +236,7 @@ export default function Rent() {
                                 <div className="apart-type-block" onClick={() => selectApartmentType(type)}>
                                     <div className="my-radio-block">
                                         <input type='radio' value={type.id}
-                                               checked={apartData.type === type.id}
-                                               onChange={() => {
-                                               }}/> {type.type_name}
+                                               checked={apartData.type === type.id}/> {type.type_name}
                                     </div>
                                 </div>
                             </div>
@@ -281,9 +300,13 @@ export default function Rent() {
                             <input type="text" name="street_name" value={apartData.street_name} className="form-control"
                                    onChange={handleChange} required/>
                             <label className={"form-label mt-2"}>Дом</label>
-                            <input type="text" name="number_house" value={apartData.number_house} className="form-control"/>
+                            <input type="text" name="number_house" value={apartData.number_house}
+                                   className="form-control"
+                                   onChange={handleChange} required/>
                             <label className={"form-label mt-2"}>Корпус</label>
-                            <input type="text" name="number_block" value={apartData.number_block} className="form-control"/>
+                            <input type="text" name="number_block" value={apartData.number_block}
+                                   className="form-control"
+                                   onChange={handleChange} required/>
                         </div>
                         <div className={"col-3"}></div>
                     </div>
@@ -314,30 +337,20 @@ export default function Rent() {
                                     onChange={handleFileChange}
                                     required
                                 />
-                                {/*<input className="form-control" type="file"/>*/}
-                                {/*<div {...getRootProps()} style={dropzoneStyles}>*/}
-                                {/*    <input {...getInputProps()} />*/}
-                                {/*    <p>Перетащите сюда файлы или кликните, чтобы выбрать</p>*/}
-                                {/*</div>*/}
-                                {/*{loadedFiles.map(f => (*/}
-                                {/*    <div>{f.name}</div>*/}
-                                {/*))}*/}
                             </div>
                             <div>
                                 {previewImages.map((image, index) => (
-                                    <>
-                                        <img
-                                            key={index}
-                                            src={image}
-                                            alt={`Preview ${index}`}
-                                            style={{width: "200px", height: "200px"}}
-                                            onClick={() =>
-                                                setPreviewImages((prevImages) =>
-                                                    prevImages.filter((_, i) => i !== index)
-                                                )
-                                            }
-                                        />
-                                    </>
+                                    <img
+                                        key={index}
+                                        src={image}
+                                        alt={`Preview ${index}`}
+                                        style={{width: "200px", height: "200px"}}
+                                        onClick={() =>
+                                            setPreviewImages((prevImages) =>
+                                                prevImages.filter((_, i) => i !== index)
+                                            )
+                                        }
+                                    />
                                 ))}
                             </div>
                         </div>
@@ -360,10 +373,51 @@ export default function Rent() {
                             <label className={"form-label mt-2"}>Название апартаментов</label>
                             <input type="text" name="name" value={apartData.name} className="form-control"
                                    onChange={handleChange} required/>
-                            <label className={"form-label mt-2"}>Количество спальных мест</label>
-                            <input type="text" name="sleeping_places" value={apartData.sleeping_places}
-                                   className="form-control"
-                                   onChange={handleChange} required/>
+                            <label className={"form-label mt-2"}>Площадь</label>
+                            <div className="input-group mb-2">
+                                <input type="text" className="form-control form-control-square"
+                                       name="square" value={apartData.square} onChange={handleChange} required/>
+                                <span className="input-group-text">м2</span>
+                            </div>
+                            <div className={"row"}>
+                                <div className={"col-4"}>
+                                    <label className={"form-label mt-2"}>Этаж</label>
+                                    <input type="text" name="number_floor" value={apartData.number_floor}
+                                           className="form-control apart-floor"
+                                           onChange={handleChange} required/>
+                                </div>
+                                <div className={"col-4"}>
+                                    <label className={"form-label mt-2"}>Количество этажей</label>
+                                    <input type="text" name="count_floor" value={apartData.count_floor}
+                                           className="form-control apart-floor"
+                                           onChange={handleChange} required/>
+                                    <input type="checkbox" value={apartData.elevator} checked={isElevator}
+                                           onChange={handleElevator}/><label className={"elevator"}> лифт</label>
+                                </div>
+                            </div>
+                            <div className={"row"}>
+                                <div className={"col-4"}>
+                                    <label className={"form-label mt-2"}>Количество комнат</label>
+                                    <div className="input-group input-group-count-room mb-2">
+                                        <span className="input-group-text minus" onClick={countRoomDown}>-</span>
+                                        <input type="text" className="form-control"
+                                               name="count_room" value={countRoom} onChange={handleChange} required/>
+                                        <span className="input-group-text plus" onClick={countRoomUp}>+</span>
+                                    </div>
+                                </div>
+                                <div className={"col-6"}>
+                                    <label className={"form-label mt-2"}>Количество спальных мест</label>
+                                    <div className="input-group input-group-count-sleeping_places mb-2">
+                                        <span className="input-group-text minus"
+                                              onClick={countSleepingPlacesDown}>-</span>
+                                        <input type="text" className="form-control"
+                                               name="sleeping_places" value={countSleepingPlaces}
+                                               onChange={handleChange}
+                                               required/>
+                                        <span className="input-group-text plus" onClick={countSleepingPlacesUp}>+</span>
+                                    </div>
+                                </div>
+                            </div>
                             <label className={"form-label mt-2"}>Цена за сутки</label>
                             <input type="text" name="price" value={apartData.price} className="form-control"
                                    onChange={handleChange} required/>
@@ -379,7 +433,8 @@ export default function Rent() {
                     </div>
                 </div>
             }
-            {stepRent === 5 &&
+            {
+                stepRent === 5 &&
                 <div className={"container"}>
                     <div className={"row"}>
                         <div className={"col rent-header"}><h3><strong>Подтверждение данных</strong></h3></div>
@@ -387,15 +442,16 @@ export default function Rent() {
                     <div className={"row"}>
                         <div className={"col-3"}></div>
                         <div className={"col-6"}>
-                            <p><strong>Тип апартаментов:</strong> {apartData.selectedApartType}</p>
+                            <p><strong>Тип апартаментов:</strong> {selectedApartmentType}</p>
                             <p><strong>Город:</strong> {apartData.city}</p>
-                            <p><strong>Тип улицы:</strong> {apartData.selectedStreetType}</p>
                             <p><strong>Название улицы:</strong> {apartData.street_name}</p>
                             <p><strong>Номер дома:</strong> {apartData.number_house}</p>
                             <p><strong>Номер корпуса:</strong> {apartData.number_block}</p>
                             <p><strong>Арендадатель:</strong> {userId}</p>
                             <p><strong>Название:</strong> {apartData.name}</p>
+                            <p><strong>Этаж:</strong> {apartData.number_floor}</p>
                             <p><strong>Количество спальных мест:</strong> {apartData.sleeping_places}</p>
+                            <p><strong>Количество комнат:</strong> {apartData.count_room}</p>
                             <p><strong>Цена за сутки:</strong> {apartData.price}</p>
                             <p><strong>Описание:</strong> {apartData.descriptions}</p>
                         </div>
@@ -411,5 +467,6 @@ export default function Rent() {
                 </div>
             }
         </Fragment>
-    );
+    )
+        ;
 }

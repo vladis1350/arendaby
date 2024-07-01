@@ -6,6 +6,8 @@ import {useSelector} from "react-redux";
 import {FaChevronLeft, FaChevronRight} from 'react-icons/fa';
 import './apartment.css';
 import Loader from "../../components/Loader/ClipLoader";
+import BookingCalendar from "../../components/BoockingCalendar/BookingCalendar";
+import PopupComponent from "../../components/PopupComponent/PopupComponent"
 
 export default function ViewApartmentDetail() {
     const {isLoggedIn} = useSelector((state) => state.auth);
@@ -15,9 +17,17 @@ export default function ViewApartmentDetail() {
     const [currentImage, setCurrentImage] = useState(0);
     const title = "Апартаменты";
     const [moved, setMoved] = useState(false);
-    const [offset, setOffset] = useState(0)
+    const [offset, setOffset] = useState(0);
+    const [showPopup, setShowPopup] = useState(false);
+
+    const handleOverlayClick = (e) => {
+        if (e.target.classList.contains('overlay')) {
+            setShowPopup(false);
+        }
+    };
 
     useEffect(() => {
+        // document.title = apartment.name;
         fetchApartmentDetail()
     }, []);
 
@@ -72,11 +82,15 @@ export default function ViewApartmentDetail() {
         setMoved(false);
     };
 
+    const handlePopupState = () => {
+        setShowPopup(true)
+    }
+
     return (
         <Fragment>
             <Navbar/>
             {apartment ? (
-                <div className={"container"}>
+                <div className={"container"} onClick={handleOverlayClick}>
                     <div className={"row"}>
                         <div className={"col-8"}>
                             <div className="slider-container">
@@ -116,24 +130,64 @@ export default function ViewApartmentDetail() {
                                             />
                                         )))}
                                 </div>
-                                <div className={"al"}>
-                                    <p>Спальных мест: {apartment.sleeping_places}</p>
-                                    <p>Описание:</p>
-                                    <p>{apartment.descriptions}</p>
+                                <div className={"container"}>
+                                    <div className={"row"}>
+                                        <div className={"col-2"}><span>Этаж : {apartment.number_floor}</span></div>
+                                        <div className={"col-2"}>
+                                            <span>Лифт : {apartment.elevator ? " Есть" : " Нет"}</span></div>
+                                        <div className={"col-2"}><span>Площадь : {apartment.square}</span></div>
+                                        <div className={"col-2"}><span>Комнат : {apartment.count_room}</span></div>
+                                    </div>
+                                    <div className={"row"}>
+                                        <div className={"col"}>
+                                            <p>Спальных мест: {apartment.sleeping_places}</p>
+                                            <p>Описание:</p>
+                                            <p>{apartment.descriptions}</p>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                         <div className={"col-4 apart-view-right-block"}>
-                            <h4>Арендодатель:</h4>
-                            <h5>
-                                <strong>{apartment.landlord.profile.firstname} {apartment.landlord.profile.secondname}</strong>
-                            </h5>
-                            <p>{apartment.landlord.profile.phone}</p>
-                            <div className={"profile-image-block"}>
-                                <img
-                                    src={apartment.landlord.profile.image}
-                                    alt={`ФОТО`}
-                                />
+                            <div className={"right-head-block"}>
+                                <div className={"row"}>
+                                    <div className={"col"}>
+                                        <BookingCalendar/>
+                                    </div>
+                                </div>
+                                <div className={"row row-guests"}>
+                                    <div className={"col"}>
+                                        <div className={"guests"} onClick={() => setShowPopup(true)}>
+                                            <div className={"input-wrapper-guests"}>
+                                                <span className="info-guests">2 взрослых, без детей</span>
+                                                <label>Гости</label>
+                                            </div>
+                                            {showPopup && <PopupComponent onChangeState={handlePopupState}
+                                                                          count_guest={apartment.sleeping_places}/>}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className={"row row-booking"}>
+                                    <div className={"col"}>
+                                        <button type="button" className="btn btn-success btn-booking">Забронировать
+                                        </button>
+                                    </div>
+                                </div>
+                                <div className={"row row-landlord"}>
+                                    <div className={"col"}>
+                                        <h4>Арендодатель:</h4>
+                                        <h5>
+                                            <strong>{apartment.landlord.profile.firstname} {apartment.landlord.profile.secondname}</strong>
+                                        </h5>
+                                        <p>{apartment.landlord.profile.phone}</p>
+                                        <div className={"profile-image-block"}>
+                                            <img
+                                                src={apartment.landlord.profile.image}
+                                                alt={`ФОТО`}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

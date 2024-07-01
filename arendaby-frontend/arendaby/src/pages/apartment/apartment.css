@@ -199,4 +199,24 @@
 
 .apart-view-right-block {
     padding-top: 50px;
+    align-items: center;
+}
+
+.right-head-block {
+    background-color: #b9def0;
+}
+
+.row-booking {
+    text-align: center;
+    padding-top: 20px;
+}
+
+.row-landlord {
+    text-align: center;
+    align-items: center;
+    padding-top: 20px;
+}
+
+.row-guests {
+    padding-top: 20px;
 }
