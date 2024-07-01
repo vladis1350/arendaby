@@ -6,7 +6,6 @@ from user.serializers import UserSerializer
 
 from .models import ApartmentType, Apartment, ApartmentPhoto, GroupApartmentType, Booking
 
-
 class ApartmentTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = ApartmentType
@@ -28,18 +27,25 @@ class ApartmentPhotoSerializer(serializers.ModelSerializer):
         fields = ("image", "apartment",)
 
 
+class BookingListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Booking
+        fields = '__all__'
+
+
 class ApartmentSerializer(serializers.ModelSerializer):
     type = ApartmentTypeSerializer(required=False)
     city = CitySerializer(required=False)
     images = ApartmentPhotoSerializer(source="apartmentphoto_set", many=True)
+    booking = BookingListSerializer(source="booking_set", many=True)
     landlord = UserSerializer(required=False)
 
     class Meta:
         model = Apartment
         fields = (
             'id', 'type', 'city', 'landlord', 'images', 'name', 'street_name', 'number_house', 'number_block',
-            "square", "number_floor", "count_floor", "sleeping_places", "elevator", "count_room", "price",
-            'descriptions',)
+            'square', 'number_floor', 'count_floor', 'sleeping_places', 'elevator', 'count_room', 'price',
+            'descriptions', 'booking', )
 
 
 class ApartmentCreateSerializer(serializers.ModelSerializer):
@@ -83,6 +89,30 @@ class GroupApartmentTypeSerializer(serializers.ModelSerializer):
 
 
 class BookingSerializer(serializers.ModelSerializer):
+    apartment = ApartmentSerializer(required=False)
+    client = UserSerializer(required=False)
+
     class Meta:
         model = Booking
-        fields = '__all__'
+        fields = ('client', 'apartment', 'start_booking', 'end_booking', 'isBooking',)
+
+
+class CreateBookingSerializer(serializers.ModelSerializer):
+    client = serializers.CharField(source='user.id')
+    apartment = serializers.CharField(source='apartment.id')
+
+    class Meta:
+        model = Booking
+        fields = ('client', 'apartment', 'start_booking', 'end_booking', 'isBooking',)
+
+    def create(self, validated_data):
+        print(validated_data)
+        apart_id = validated_data.pop('apartment')['id']
+        client_id = validated_data.pop('user')['id']
+
+        client = User.objects.get(pk=client_id)
+        apartment = Apartment.objects.get(pk=apart_id)
+        booking = Booking.objects.create(client=client, apartment=apartment, **validated_data)
+
+        return booking
+
