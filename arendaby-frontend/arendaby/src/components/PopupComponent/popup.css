@@ -11,6 +11,13 @@
     z-index: 999;
 }
 
+.booking-calendar {
+    padding-top: 20px;
+    padding-left: 20px;
+    align-items: center;
+    text-align: center;
+}
+
 .overlay .row {
     border-bottom: #20c997 solid 1px;
     padding-top: 15px;

@@ -81,7 +81,7 @@ class ApartmentPhoto(models.Model):
 class Booking(models.Model):
     client = models.ForeignKey(User, on_delete=models.CASCADE, related_name='client', verbose_name='Клиент',
                                blank=False, null=False)
-    apartment = models.ForeignKey(Apartment, on_delete=models.CASCADE, related_name='apartment',
+    apartment = models.ForeignKey(Apartment, on_delete=models.CASCADE, related_name='booking_set',
                                   verbose_name='Апартаменты', blank=False, null=False)
     start_booking = models.DateTimeField(verbose_name="Бронь с")
     end_booking = models.DateTimeField(verbose_name="Бронь по")

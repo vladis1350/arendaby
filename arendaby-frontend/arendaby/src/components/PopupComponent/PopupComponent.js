@@ -2,13 +2,14 @@ import React, {useState} from 'react';
 import "./popup.css";
 import {FaMinus, FaPlus} from 'react-icons/fa';
 
-const PopupComponent = ({onChangeState, count_guest}) => {
+const PopupComponent = ({onClose, count_guest}) => {
     const [adults, setAdults] = useState(1);
     const [children, setChildren] = useState(0);
     const childrenAges = Array.from({length: 17}, (_, idx) => idx + 1);
 
-    const hideCountGuestBlock = () => {
-        onChangeState(true);
+    const handleCloseBlock = (e) => {
+        e.stopPropagation();
+        onClose(adults, children);
     }
 
     return (
@@ -61,8 +62,10 @@ const PopupComponent = ({onChangeState, count_guest}) => {
                 <div className={"row"}>
                     <div className={"col"}>
                         {(adults + children) <= count_guest ?
-                            (<button type="button" onClick={hideCountGuestBlock} className="btn btn-success count-guest-apply">Применить</button>) :
-                            (<p className={"text-danger"}>Внимание! Жильё вмещает максимум {count_guest} гостей.
+                            (<button onClick={handleCloseBlock}
+                                     className="btn btn-success count-guest-apply">Применить</button>) :
+                            (<p className={"text-danger"}>Внимание! Жильё вмещает
+                                максимум {count_guest} гостей.
                                 Уменьшите их
                                 количество или найдите более вместительный объект.</p>)
                         }
@@ -70,8 +73,7 @@ const PopupComponent = ({onChangeState, count_guest}) => {
                 </div>
             </div>
         </div>
-    )
-        ;
+    );
 };
 
 export default PopupComponent;

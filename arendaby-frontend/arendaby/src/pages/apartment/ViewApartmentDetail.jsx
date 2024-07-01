@@ -1,7 +1,7 @@
 import React, {Fragment, useEffect, useState} from 'react';
 import Navbar from "../../components/navbar/navbar";
 import {useParams} from "react-router-dom";
-import {api} from "../../services/Api";
+import {api, createBooking} from "../../services/Api";
 import {useSelector} from "react-redux";
 import {FaChevronLeft, FaChevronRight} from 'react-icons/fa';
 import './apartment.css';
@@ -10,7 +10,7 @@ import BookingCalendar from "../../components/BoockingCalendar/BookingCalendar";
 import PopupComponent from "../../components/PopupComponent/PopupComponent"
 
 export default function ViewApartmentDetail() {
-    const {isLoggedIn} = useSelector((state) => state.auth);
+    const {isLoggedIn, userId} = useSelector((state) => state.auth);
     const [loading, setLoading] = useState(false);
     const {apart_id} = useParams();
     const [apartment, setApartment] = useState();
@@ -19,7 +19,15 @@ export default function ViewApartmentDetail() {
     const [moved, setMoved] = useState(false);
     const [offset, setOffset] = useState(0);
     const [showPopup, setShowPopup] = useState(false);
+    const [adults, setAdults] = useState(1);
+    const [children, setChildren] = useState(0);
+    const [selectedDates, setSelectedDates] = useState([]);
 
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+
+        return date.toISOString().slice(0, 19);
+    };
     const handleOverlayClick = (e) => {
         if (e.target.classList.contains('overlay')) {
             setShowPopup(false);
@@ -82,8 +90,33 @@ export default function ViewApartmentDetail() {
         setMoved(false);
     };
 
-    const handlePopupState = () => {
-        setShowPopup(true)
+    const openGuestBlock = () => {
+        setShowPopup(true);
+    }
+
+    const closeGuestBlock = (adults, child) => {
+        setShowPopup(false);
+        setAdults(adults);
+        setChildren(child);
+    };
+
+    const handleDateSelection = (start, end) => {
+        setSelectedDates([start, end]);
+    }
+
+    const toBooking = async () => {
+        const formDataToSend = new FormData();
+        formDataToSend.append('client', userId);
+        formDataToSend.append('apartment', apart_id);
+        formDataToSend.append('start_booking', formatDate(selectedDates[0]));
+        formDataToSend.append('end_booking', formatDate(selectedDates[1]));
+        formDataToSend.append('isBooking', false);
+        const response = await createBooking(formDataToSend);
+        if (response.status === 201) {
+            alert("Бронь создана!");
+        } else {
+            alert("Что то пошло не так!");
+        }
     }
 
     return (
@@ -151,25 +184,26 @@ export default function ViewApartmentDetail() {
                         <div className={"col-4 apart-view-right-block"}>
                             <div className={"right-head-block"}>
                                 <div className={"row"}>
-                                    <div className={"col"}>
-                                        <BookingCalendar/>
+                                    <div className={"col booking-calendar"}>
+                                        <BookingCalendar getPeriod={handleDateSelection}/>
                                     </div>
                                 </div>
                                 <div className={"row row-guests"}>
                                     <div className={"col"}>
-                                        <div className={"guests"} onClick={() => setShowPopup(true)}>
+                                        <div className={"guests"} onClick={openGuestBlock}>
                                             <div className={"input-wrapper-guests"}>
-                                                <span className="info-guests">2 взрослых, без детей</span>
+                                                <span
+                                                    className="info-guests">{adults} взрослых, {children === 0 ? "без детей" : children + " детей"}</span>
                                                 <label>Гости</label>
                                             </div>
-                                            {showPopup && <PopupComponent onChangeState={handlePopupState}
-                                                                          count_guest={apartment.sleeping_places}/>}
                                         </div>
+                                        {showPopup && (<PopupComponent onClose={closeGuestBlock}
+                                                                       count_guest={apartment.sleeping_places}/>)}
                                     </div>
                                 </div>
                                 <div className={"row row-booking"}>
                                     <div className={"col"}>
-                                        <button type="button" className="btn btn-success btn-booking">Забронировать
+                                        <button type="button" onClick={toBooking} className="btn btn-success btn-booking">Забронировать
                                         </button>
                                     </div>
                                 </div>

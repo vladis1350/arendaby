@@ -42,8 +42,18 @@ export const createApartment = async (data) => {
     return api.post("/api/apartment/create/", data, cfg);
 }
 
+export const createBooking = async (data) => {
+    const cfg = {headers: {"Content-Type": "multipart/form-data"}};
+    return api.post(`/api/apartment/booking/create/`, data, cfg);
+}
+
 export const getCities = async (id) =>
     api.get(`/api/cities/${id}`);
+
+export const filterApartment = async (dataFilter) => {
+    const cfg = {headers: {"Content-Type": "multipart/form-data"}};
+    return api.post(`/api/apartment/booking/filter/`, dataFilter, cfg);
+}
 
 export const getApartment = async (city) =>
     api.get(`/api/apartment/city/${city}`);

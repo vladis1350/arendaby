@@ -9,7 +9,7 @@ import {showMessageInfo} from "../../Redux/messagesReducer";
 
 export default function Rent() {
     const dispatch = useDispatch();
-    const {isLoggedIn, userId, token, refreshToken} = useSelector(
+    const {isLoggedIn, userId} = useSelector(
         (state) => state.auth);
     const [groupApartmentType, setGroupApartmentType] = useState([]);
     const [selectedApartmentType, setSelectedApartmentType] = useState("");
@@ -157,6 +157,7 @@ export default function Rent() {
             console.log(err);
         }
     }
+
     const fetchGroupApartmentTypes = async () => {
         try {
             const response = await getGroupApartmentType();
