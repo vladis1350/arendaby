@@ -24,6 +24,15 @@ export default function UserProfile() {
         email: "",
         phone: "",
     });
+    const [isBookingList, setIsBookingList] = useState(false);
+
+    const openBookingList = () => {
+        setIsBookingList(true);
+    }
+
+    const closeBookingList = () => {
+        setIsBookingList(false);
+    }
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -40,6 +49,7 @@ export default function UserProfile() {
                             image: response.data.profile.image,
                             email: response.data.email,
                             phone: response.data.profile.phone,
+                            booking: response.data.booking,
                         });
                     }
                 }
@@ -96,6 +106,15 @@ export default function UserProfile() {
                                 <p><strong>Username:</strong> {formData.username}</p>
                                 <p><strong>Email:</strong> {formData.email}</p>
                                 <p><strong>Телефон:</strong> {formData.phone}</p>
+                                {!isBookingList ?
+                                    (<>
+                                        <p onClick={openBookingList}>Показать мой список бронирований</p>
+                                    </>) : (<><p onClick={closeBookingList}>Скрыть список бронирований</p>
+                                        <div>
+                                            {formData.booking}
+                                        </div>
+                                    </>)
+                                }
                             </div>
                         </div>
                     </div>

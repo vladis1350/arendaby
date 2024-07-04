@@ -46,12 +46,10 @@ export default function ViewApartmentDetail() {
     const fetchApartmentDetail = async () => {
         try {
             setLoading(true);
-            // const response = await getApartmentById(apart_id);
             api.get(`/api/apartment/${apart_id}`)
                 .then(res => res.data)
                 .then(data => setApartment(data))
                 .catch(err => console.log(err))
-            // setApartment(response.data)
             setLoading(false);
         } catch (error) {
             console.error(error);

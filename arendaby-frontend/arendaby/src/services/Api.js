@@ -18,6 +18,9 @@ export const getUser = async (id) =>
 export const authUser = async (username, email, password) =>
     api.post("/api/user/register/", {username, email, password});
 
+export const getCity = async (city_id) =>
+    api.get(`/api/city/${city_id}`);
+
 export const loginUser = async (username, password) =>
     api.post("/api/token/", {username, password});
 

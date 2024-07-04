@@ -23,11 +23,6 @@ function Logout() {
     return <Navigate to="/login"/>
 }
 
-function RegisterAndLogout() {
-    localStorage.clear()
-    return <Register/>
-}
-
 export default function App() {
     const dispatch = useDispatch();
     const token = useSelector((state) => state.auth.token);
@@ -74,6 +69,7 @@ export default function App() {
                 <Route path="/register" element={<Register/>}/>
                 <Route path="/country/:country/:id" element={<City/>}/>
                 <Route path="/apartment/city/:id" element={<Apartment/>}/>
+                <Route path="/apartment" element={<Apartment/>}/>
                 <Route path="/apartment/:apart_id" element={<ViewApartmentDetail/>}/>
                 <Route path="/reservation" element={<Reservations/>}/>
                 <Route path="/favorites" element={<Favorites/>}/>

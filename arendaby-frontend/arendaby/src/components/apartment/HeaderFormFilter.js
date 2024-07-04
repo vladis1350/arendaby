@@ -1,14 +1,16 @@
 import React, {useState} from 'react';
-import {api, filterApartment} from "../../services/Api";
+import {api} from "../../services/Api";
 import BookingCalendar from "../BoockingCalendar/BookingCalendar";
 import {FaSearch} from 'react-icons/fa';
+import {useNavigate} from 'react-router-dom';
 
 export default function HeaderFormFilter() {
     const [searchTerm, setSearchTerm] = useState('');
     const [city, setCity] = useState([]);
+    const [selectedCity, setSelectedCity] = useState();
     const [isSearchFocused, setIsSearchFocused] = useState(false);
-    const [apartmentFilter, setApartmentFilter] = useState([])
     const [selectedDates, setSelectedDates] = useState([]);
+    const navigate = useNavigate();
 
     const searchInputStyle = {
         border: "none",
@@ -24,15 +26,12 @@ export default function HeaderFormFilter() {
         return date.toISOString().slice(0, 19);
     };
 
-    const fetchApartmentByFilter = async () => {
-        const formDataToSend = new FormData();
-        alert(city.id)
-        formDataToSend.append('city', searchTerm);
-        formDataToSend.append('start_booking', formatDate(selectedDates[0]));
-        formDataToSend.append('end_booking', formatDate(selectedDates[1]));
-        const response = await filterApartment(formDataToSend);
-
-        setApartmentFilter(response.data);
+    const redirectTo = () => {
+        if (city && selectedDates.length !== 0) {
+            navigate(`/apartment?city=${selectedCity.id}&start_booking=${formatDate(selectedDates[0])}&end_booking=${formatDate(selectedDates[1])}`);
+        } else {
+            navigate(`/apartment/city/${selectedCity.id}`);
+        }
     }
 
     const handleSearchFocus = () => {
@@ -44,7 +43,8 @@ export default function HeaderFormFilter() {
     };
 
     const handleSelectCity = (item) => {
-        setSearchTerm(item)
+        setSearchTerm(item.name);
+        setSelectedCity(item);
         handleSearchBlur();
     };
 
@@ -82,31 +82,24 @@ export default function HeaderFormFilter() {
                     </div>
                 </div>
                 <div className={"col-2 fa-search-block"}>
-                    <div onClick={fetchApartmentByFilter} className={"search-button"}>
+                    <div onClick={redirectTo} className={"search-button"}>
                         <label>Найти</label>
                         <FaSearch size={30} className={"fa-search"}/>
                     </div>
+                    {/*<div onClick={redirectTo} className={"search-button"}>*/}
+                    {/*    <label>Найти</label>*/}
+                    {/*    <FaSearch size={30} className={"fa-search"}/>*/}
+                    {/*</div>*/}
                 </div>
             </div>
             <div className="row">
                 <div className={isSearchFocused ? "col-6 search-result-focused" : "col-6 search-result-normal"}>
                     <ul>
                         {city.map(result => (
-                            <li key={result.id} onClick={() => handleSelectCity(result.name)}><span>{result.name}</span>
+                            <li key={result.id} onClick={() => handleSelectCity(result)}><span>{result.name}</span>
                             </li>
                         ))}
                     </ul>
-                </div>
-            </div>
-            <div className={"row"}>
-                <div className={"col"}>
-                    {apartmentFilter.length !== 0 ? (
-                        apartmentFilter.map(item => (
-                            <p>{item.name}</p>
-                        ))
-                    ) : (
-                        <div>Поиск не дал результов</div>
-                    )}
                 </div>
             </div>
         </div>
