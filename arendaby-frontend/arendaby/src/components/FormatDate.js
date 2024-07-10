@@ -1,10 +1,10 @@
-const FormatDate = (dateString) => {
+const FormatDate = ({dateString}) => {
     const date = new Date(dateString);
 
     const options = {
         day: 'numeric',
         month: 'long',
-        weekday: 'short'
+        year: 'numeric'
     };
 
     const dateFormatter = new Intl.DateTimeFormat('ru-RU', options);

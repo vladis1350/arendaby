@@ -12,7 +12,7 @@ export default function VocationIdeas() {
 
     const getIdeas = () => {
         api
-            .get("/api/ideas/")
+            .get("/api/v-ideas/")
             .then((res) => res.data)
             .then((data) => {
                 setVocationIdeas(data);
@@ -20,6 +20,19 @@ export default function VocationIdeas() {
             })
             .catch((err) => alert(err))
     };
+
+    const LinkToIdea = ({url, param, item}) => {
+        return (
+            <Link className="link-ideas" to={url + param}>
+                <h6 className="card-header">{item.title}</h6>
+                <img src={item.image} alt="Тут картинка"
+                     className="d-block"/>
+                <div className="card-body">
+                    <p className="card-text">{item.info}</p>
+                </div>
+            </Link>
+        )
+    }
 
     return (
         // <Router>
@@ -33,14 +46,7 @@ export default function VocationIdeas() {
                 {ideas.map(item => (
                     <div className="col-sm">
                         <div className="card ideas-block mb-3">
-                            <Link className="link-ideas" to={item.link}>
-                                <h6 className="card-header">{item.title}</h6>
-                                <img src={item.image} alt="Тут картинка"
-                                     className="d-block"/>
-                                <div className="card-body">
-                                    <p className="card-text">{item.info}</p>
-                                </div>
-                            </Link>
+                            <LinkToIdea url={"/ideas/"} param={item.id} item={item}/>
                         </div>
                     </div>
                 ))}

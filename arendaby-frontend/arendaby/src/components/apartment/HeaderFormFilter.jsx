@@ -28,7 +28,7 @@ export default function HeaderFormFilter() {
 
     const redirectTo = () => {
         if (city && selectedDates.length !== 0) {
-            navigate(`/apartment?city=${selectedCity.id}&start_booking=${formatDate(selectedDates[0])}&end_booking=${formatDate(selectedDates[1])}`);
+            navigate(`/apartment-filter?city=${selectedCity.id}&start_booking=${formatDate(selectedDates[0])}&end_booking=${formatDate(selectedDates[1])}`);
         } else {
             navigate(`/apartment/city/${selectedCity.id}`);
         }
