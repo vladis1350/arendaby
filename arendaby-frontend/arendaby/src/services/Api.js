@@ -53,6 +53,12 @@ export const createBooking = async (data) => {
 export const getCities = async (id) =>
     api.get(`/api/cities/${id}`);
 
+export const getUserBooking = async (user_id) =>
+    api.get(`/api/booking/user/${user_id}`);
+
+export const getIdea = async (v_id) =>
+    api.get(`/api/v-ideas/idea/${v_id}`);
+
 export const filterApartment = async (dataFilter) => {
     const cfg = {headers: {"Content-Type": "multipart/form-data"}};
     return api.post(`/api/apartment/booking/filter/`, dataFilter, cfg);

@@ -127,7 +127,7 @@ export default function ViewApartmentDetail() {
                             <div className="slider-container">
                                 <div className={"header_view-apart"}>
                                     <h3><strong>{apartment.name}</strong></h3>
-                                    <p>{apartment.street_name}, {apartment.number_house}, {apartment.number_block}</p>
+                                    <p>{apartment.street_name}, {apartment.number_house}, {apartment.number_block !== '-' ? apartment.number_block : ''}</p>
                                 </div>
                                 <div className={"main-image-block"} onMouseEnter={handleMouseEnter}
                                      onMouseLeave={handleMouseLeave}

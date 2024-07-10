@@ -16,7 +16,8 @@ import {showMessageInfo} from "./Redux/messagesReducer";
 import UserProfile from "./pages/UserProfile/UserProfile";
 import Rent from "./pages/Rent/Rent";
 import ViewApartmentDetail from "./pages/apartment/ViewApartmentDetail";
-
+import ApartmentFilterResult from "./components/apartment/ApartmentFilterResult";
+import IdeaPage from "./pages/IdeasPage/IdeaPage";
 
 function Logout() {
     localStorage.clear()
@@ -69,11 +70,12 @@ export default function App() {
                 <Route path="/register" element={<Register/>}/>
                 <Route path="/country/:country/:id" element={<City/>}/>
                 <Route path="/apartment/city/:id" element={<Apartment/>}/>
-                <Route path="/apartment" element={<Apartment/>}/>
+                <Route path="/apartment-filter" element={<ApartmentFilterResult/>}/>
                 <Route path="/apartment/:apart_id" element={<ViewApartmentDetail/>}/>
                 <Route path="/reservation" element={<Reservations/>}/>
                 <Route path="/favorites" element={<Favorites/>}/>
                 <Route path="/rent-out" element={<Rent/>}/>
+                <Route path="/ideas/:v_id" element={<IdeaPage/>}/>
                 <Route path="*" element={<NotFound/>}/>
             </Routes>
         </BrowserRouter>
