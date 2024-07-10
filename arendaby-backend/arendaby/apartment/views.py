@@ -1,11 +1,16 @@
+import pytz
 from country.models import City
+from django.db.models import Q
 from rest_framework import generics, status
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from user.models import User
 
-from .models import Apartment, ApartmentType, ApartmentPhoto, GroupApartmentType
+from .models import Apartment, ApartmentType, ApartmentPhoto, GroupApartmentType, Booking
 from .serializers import ApartmentSerializer, ApartmentPhotoSerializer, ApartmentTypeSerializer, \
-    GroupApartmentTypeSerializer, ApartmentCreateSerializer
+    GroupApartmentTypeSerializer, ApartmentCreateSerializer, CreateBookingSerializer, BookingSerializer
+
+tz = pytz.timezone('Europe/Moscow')
 
 
 class ApartmentViewList(generics.ListAPIView):
@@ -112,8 +117,6 @@ class RentApartmentView(generics.CreateAPIView):
 
     def post(self, request, *args, **kwargs):
         serializer = ApartmentCreateSerializer(data=request.data)
-        print(request.data)
-        print(serializer)
         if serializer.is_valid():
             apartment = serializer.save()
             return Response(status=status.HTTP_201_CREATED)
@@ -156,9 +159,56 @@ class ApartmentByIdView(generics.ListAPIView):
         return Response(serializer.data, status.HTTP_200_OK)
 
 
-class BookingApartmentView(generics.ListAPIView):
+class ApartmentFilterView(generics.ListAPIView):
     queryset = Apartment.objects.all()
     serializer_class = ApartmentSerializer
 
-    def get(self, request, *args, **kwargs):
-        pass
+    def post(self, request, *args, **kwargs):
+        city_name = request.data['city']
+        start_booking = request.data['start_booking']
+        end_booking = request.data['end_booking']
+
+        if start_booking != "" and end_booking != "":
+            apartments = Apartment.objects.filter(city__name=city_name).exclude(
+                id__in=Booking.objects.filter(
+                    Q(start_booking__lte=start_booking, end_booking__gte=start_booking) |
+                    Q(start_booking__lte=end_booking, end_booking__gte=end_booking) |
+                    Q(start_booking__gte=start_booking, end_booking__lte=end_booking)
+                ).values_list('apartment', flat=True)
+            )
+            serializer = self.get_serializer(apartments, many=True)
+            return Response(serializer.data, status.HTTP_200_OK)
+        else:
+            return Response({"error": "bad request"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class BookingApartmentView(generics.CreateAPIView):
+    queryset = Booking.objects.all()
+    serializer_class = CreateBookingSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = CreateBookingSerializer(data=request.data)
+        if serializer.is_valid():
+            booking = serializer.save()
+            return Response(status=status.HTTP_201_CREATED)
+        print(serializer.errors)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class BookingUserApartmentView(generics.ListAPIView):
+    queryset = Booking.objects.all()
+    serializer_class = BookingSerializer
+
+    def list(self, request, *args, **kwargs):
+        user_id = self.kwargs.get('user_id')
+        if not user_id:
+            return Response({"error": "User is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            user = User.objects.get(pk=user_id)
+        except User.DoesNotExist:
+            return Response({"error": "User not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        bookingList = Booking.objects.filter(client=user)
+        serializer = self.get_serializer(bookingList, many=True)
+        return Response(serializer.data, status.HTTP_200_OK)

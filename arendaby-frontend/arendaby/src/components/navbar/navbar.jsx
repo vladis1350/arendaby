@@ -1,17 +1,30 @@
 import React, {useEffect, useState} from "react";
-import "../../styles/bootstrap.min.css"
-import {api} from "../../services/Api";
+import "../../styles/bootstrap.min.css";
+import {api, getUser} from "../../services/Api";
 import {useSelector} from "react-redux";
+import Loader from "../Loader/ClipLoader";
+import ProfileUserImage from "../navbar/ProfileImage";
 
 function Menu() {
     const [menuItems, setMenuItems] = useState([]);
-    const [status, setStatus] = useState(null);
-    const {isLoggedIn, userId, token, refreshToken} = useSelector(
+    const [user, setUser] = useState();
+    const [loading, setLoading] = useState(true);
+    const {isLoggedIn, userId} = useSelector(
         (state) => state.auth);
 
     useEffect(() => {
-        getMenu();
-    }, []);
+        try {
+            setLoading(true);
+            if (isLoggedIn) {
+                getUserById();
+            }
+            getMenu();
+        } catch (err) {
+            console(err);
+        } finally {
+            setLoading(false);
+        }
+    }, [isLoggedIn]);
 
     const getMenu = () => {
         api
@@ -24,12 +37,13 @@ function Menu() {
             .catch((err) => alert(err))
     }
 
-    const getStatus = () => {
-        api.get("/api/token/")
-            .then(res => {
-                setStatus(res.status)
-            })
-            .catch((err) => console.log(err))
+    const getUserById = async () => {
+        const response = await getUser(userId);
+        if (response.status === 200) {
+            setUser(response.data);
+        } else {
+            alert("Error Authorization");
+        }
     }
 
     return (
@@ -44,10 +58,25 @@ function Menu() {
                 <div className="collapse navbar-collapse" id="navbarColor02">
                     <ul className="navbar-nav me-auto">
                         {menuItems.map(item => (
-                                <li className="nav-item">
+                            isLoggedIn && item.name === "Войти" ?
+                                (<>
+                                    <li className="nav-item">
+                                        <a className="nav-link" href={"/logout"}>Выйти</a>
+                                    </li>
+                                    {user ?
+                                        (<li className="nav-item">
+                                            <a className="nav-link profile-link"
+                                               href={"/profile"}>
+                                                {user.profile.firstname} {user.profile.secondname}
+                                                <ProfileUserImage/></a>
+                                        </li>
+
+                                        ) : (<Loader loading={loading}/>)
+                                    }
+                                </>) :
+                                (<li className="nav-item">
                                     <a className="nav-link" key={item.id} href={item.link}>{item.name}</a>
-                                </li>
-                            )
+                                </li>))
                         )}
                     </ul>
                 </div>

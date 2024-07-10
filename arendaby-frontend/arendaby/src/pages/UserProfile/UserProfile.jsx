@@ -1,14 +1,16 @@
 import React, {Fragment, useEffect, useState} from "react"
 import Navbar from "../../components/navbar/navbar";
 import {useDispatch, useSelector} from "react-redux";
-import {getRefreshToken, getUser} from "../../services/Api"
+import {getRefreshToken, getUser, getUserBooking} from "../../services/Api"
 import "./UserProfile.css"
 import {useNavigate} from "react-router-dom";
 import {login, logout} from "../../Redux/authReducer";
 import {showMessageInfo} from "../../Redux/messagesReducer";
+import UserItemReservation from "../../components/UserItemReservation/UserItemReservation";
 
 export default function UserProfile() {
     const [userData, setUserData] = useState(null)
+    const [booking, setBooking] = useState([])
     const [loading, setLoading] = useState(true)
     const {isLoggedIn, userId, token, refreshToken} = useSelector(
         (state) => state.auth);
@@ -24,6 +26,18 @@ export default function UserProfile() {
         email: "",
         phone: "",
     });
+    const [isBookingList, setIsBookingList] = useState(false);
+
+    const fetchUserBooking = async () => {
+        const response = await getUserBooking(userId);
+        if (response.status === 200) {
+            setBooking(response.data);
+        }
+    }
+
+    const toggleBlock = () => {
+        setIsBookingList(!isBookingList);
+    };
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -40,6 +54,7 @@ export default function UserProfile() {
                             image: response.data.profile.image,
                             email: response.data.email,
                             phone: response.data.profile.phone,
+                            booking: response.data.booking,
                         });
                     }
                 }
@@ -73,6 +88,7 @@ export default function UserProfile() {
             }
         };
         fetchUser();
+        fetchUserBooking();
     }, [isLoggedIn, userIsUpdated]);
 
     return (
@@ -96,6 +112,14 @@ export default function UserProfile() {
                                 <p><strong>Username:</strong> {formData.username}</p>
                                 <p><strong>Email:</strong> {formData.email}</p>
                                 <p><strong>Телефон:</strong> {formData.phone}</p>
+                                <p onClick={toggleBlock} className={"open-close-user-reservation"}>{isBookingList ? 'Скрыть список' : 'Показать список'}</p>
+                                <div className={`user-reservations-block ${isBookingList ? 'open' : 'closed'}`}>
+                                    {booking ? (booking.map(item => (
+                                        <UserItemReservation reservation={item}/>
+                                    ))) : (
+                                        <div><h4>У вас нет не одной брони!</h4></div>
+                                    )}
+                                </div>
                             </div>
                         </div>
                     </div>

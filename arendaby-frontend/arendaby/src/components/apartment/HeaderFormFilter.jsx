@@ -2,14 +2,36 @@ import React, {useState} from 'react';
 import {api} from "../../services/Api";
 import BookingCalendar from "../BoockingCalendar/BookingCalendar";
 import {FaSearch} from 'react-icons/fa';
+import {useNavigate} from 'react-router-dom';
 
 export default function HeaderFormFilter() {
     const [searchTerm, setSearchTerm] = useState('');
     const [city, setCity] = useState([]);
+    const [selectedCity, setSelectedCity] = useState();
     const [isSearchFocused, setIsSearchFocused] = useState(false);
+    const [selectedDates, setSelectedDates] = useState([]);
+    const navigate = useNavigate();
 
     const searchInputStyle = {
         border: "none",
+    }
+
+    const handleDateSelection = (start, end) => {
+        setSelectedDates([start, end]);
+    }
+
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+
+        return date.toISOString().slice(0, 19);
+    };
+
+    const redirectTo = () => {
+        if (city && selectedDates.length !== 0) {
+            navigate(`/apartment-filter?city=${selectedCity.id}&start_booking=${formatDate(selectedDates[0])}&end_booking=${formatDate(selectedDates[1])}`);
+        } else {
+            navigate(`/apartment/city/${selectedCity.id}`);
+        }
     }
 
     const handleSearchFocus = () => {
@@ -18,6 +40,12 @@ export default function HeaderFormFilter() {
 
     const handleSearchBlur = () => {
         setIsSearchFocused(false);
+    };
+
+    const handleSelectCity = (item) => {
+        setSearchTerm(item.name);
+        setSelectedCity(item);
+        handleSearchBlur();
     };
 
     const fetchCity = async (e) => {
@@ -38,15 +66,14 @@ export default function HeaderFormFilter() {
                 <div className="col-4 col-3-change">
                     <div className={"input-wrapper"}>
                         <input className="form-control me-md-3 city-search"
-                           type="text" placeholder="Куда едем"
+                               type="text" placeholder="Куда едем"
                                style={searchInputStyle}
-                           value={searchTerm} onChange={fetchCity} onFocus={handleSearchFocus}
-                           onBlur={handleSearchBlur}/>
+                               value={searchTerm} onChange={fetchCity} onFocus={handleSearchFocus}/>
                         <label>Курорт, город или адрес</label>
                     </div>
                 </div>
                 <div className="data-wrapper">
-                        <BookingCalendar/>
+                    <BookingCalendar getPeriod={handleDateSelection}/>
                 </div>
                 <div className={"guests"}>
                     <div className={"input-wrapper-guests"}>
@@ -55,17 +82,22 @@ export default function HeaderFormFilter() {
                     </div>
                 </div>
                 <div className={"col-2 fa-search-block"}>
-                    <div className={"search-button"}>
+                    <div onClick={redirectTo} className={"search-button"}>
                         <label>Найти</label>
                         <FaSearch size={30} className={"fa-search"}/>
                     </div>
+                    {/*<div onClick={redirectTo} className={"search-button"}>*/}
+                    {/*    <label>Найти</label>*/}
+                    {/*    <FaSearch size={30} className={"fa-search"}/>*/}
+                    {/*</div>*/}
                 </div>
             </div>
             <div className="row">
                 <div className={isSearchFocused ? "col-6 search-result-focused" : "col-6 search-result-normal"}>
                     <ul>
                         {city.map(result => (
-                            <li key={result.id}><span>{result.name}</span></li>
+                            <li key={result.id} onClick={() => handleSelectCity(result)}><span>{result.name}</span>
+                            </li>
                         ))}
                     </ul>
                 </div>

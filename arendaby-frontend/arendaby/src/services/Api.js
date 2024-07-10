@@ -18,6 +18,9 @@ export const getUser = async (id) =>
 export const authUser = async (username, email, password) =>
     api.post("/api/user/register/", {username, email, password});
 
+export const getCity = async (city_id) =>
+    api.get(`/api/city/${city_id}`);
+
 export const loginUser = async (username, password) =>
     api.post("/api/token/", {username, password});
 
@@ -42,8 +45,24 @@ export const createApartment = async (data) => {
     return api.post("/api/apartment/create/", data, cfg);
 }
 
+export const createBooking = async (data) => {
+    const cfg = {headers: {"Content-Type": "multipart/form-data"}};
+    return api.post(`/api/apartment/booking/create/`, data, cfg);
+}
+
 export const getCities = async (id) =>
     api.get(`/api/cities/${id}`);
+
+export const getUserBooking = async (user_id) =>
+    api.get(`/api/booking/user/${user_id}`);
+
+export const getIdea = async (v_id) =>
+    api.get(`/api/v-ideas/idea/${v_id}`);
+
+export const filterApartment = async (dataFilter) => {
+    const cfg = {headers: {"Content-Type": "multipart/form-data"}};
+    return api.post(`/api/apartment/booking/filter/`, dataFilter, cfg);
+}
 
 export const getApartment = async (city) =>
     api.get(`/api/apartment/city/${city}`);

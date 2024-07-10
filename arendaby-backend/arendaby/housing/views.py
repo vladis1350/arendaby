@@ -1,7 +1,11 @@
-from rest_framework import generics
+from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from .models import MenuItem, VocationIdeas
-from .serializers import MenuItemSerializer, VocationIdeasSerializer
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
+from .models import MenuItem, VocationIdeas, Idea
+from .parserIdeas import parse_webpage
+from .serializers import MenuItemSerializer, VocationIdeasSerializer, IdeaSerializer, IdeaTextSerializer
 
 
 class MenuItemList(generics.ListAPIView):
@@ -20,3 +24,33 @@ class VocationIdeasList(generics.ListAPIView):
     queryset = VocationIdeas.objects.all()
     serializer_class = VocationIdeasSerializer
     permission_classes = [AllowAny, ]
+
+
+class IdeasList(generics.ListAPIView):
+    queryset = Idea.objects.all()
+    serializer_class = IdeaSerializer
+    permission_classes = [AllowAny, ]
+
+    def list(self, request, *args, **kwargs):
+        v_id = self.kwargs.get('v_id')
+        if not v_id:
+            return Response({"error": "Vocation Ideas is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            vocation_ideas = VocationIdeas.objects.get(pk=v_id)
+        except VocationIdeas.DoesNotExist:
+            return Response({"error": "Vocation Ideas not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        ideaList = Idea.objects.filter(vocation_ideas=vocation_ideas)
+        serializer = self.get_serializer(ideaList, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class TextListView(APIView):
+
+    def get(self, request):
+        url = 'https://www.sutochno.ru/info/15-krasivyh-gorodov-podmoskovya'
+        parse_data = parse_webpage(url)
+        serialized_text = IdeaTextSerializer(data={"long_text": parse_data})
+        if serialized_text.is_valid():
+            return Response(serialized_text.data)

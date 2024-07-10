@@ -9,7 +9,7 @@ import {showMessageInfo} from "../../Redux/messagesReducer";
 
 export default function Rent() {
     const dispatch = useDispatch();
-    const {isLoggedIn, userId, token, refreshToken} = useSelector(
+    const {isLoggedIn, userId} = useSelector(
         (state) => state.auth);
     const [groupApartmentType, setGroupApartmentType] = useState([]);
     const [selectedApartmentType, setSelectedApartmentType] = useState("");
@@ -19,7 +19,6 @@ export default function Rent() {
     const [isSearchFocused, setIsSearchFocused] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [userCity, setUserCity] = useState([]);
-    const [loadedFiles, setLoadedFiles] = useState([]);
     const [isElevator, setIsElevator] = useState(false);
     const [progress, setProgress] = useState(20);
     const [countRoom, setCountRoom] = useState(1);
@@ -157,6 +156,7 @@ export default function Rent() {
             console.log(err);
         }
     }
+
     const fetchGroupApartmentTypes = async () => {
         try {
             const response = await getGroupApartmentType();
@@ -188,7 +188,7 @@ export default function Rent() {
 
     useEffect(() => {
         fetchGroupApartmentTypes();
-    }, [countRoom, countSleepingPlaces, isElevator]);
+    }, [countRoom, countSleepingPlaces, isElevator, stepRent]);
 
     const transitionBlock = {
         transition: "width 1s, height 1s",

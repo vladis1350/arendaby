@@ -180,11 +180,11 @@
 }
 
 .header_view-apart p {
-    color: #9ad7ec;
+    color: #8c8c8c;
 }
 
 .profile-image-block {
-    width: 150px;
+    width: 100%;
     height: 150px;
     position: relative;
     display: flex;
@@ -195,6 +195,7 @@
     max-height: 100%;
     object-fit: contain;
     border-radius: 50%;
+    margin: 0 auto;
 }
 
 .apart-view-right-block {
@@ -203,7 +204,7 @@
 }
 
 .right-head-block {
-    background-color: #b9def0;
+    background-color: #d9edf7;
 }
 
 .row-booking {
@@ -218,5 +219,6 @@
 }
 
 .row-guests {
+    padding-left: 10px;
     padding-top: 20px;
 }
