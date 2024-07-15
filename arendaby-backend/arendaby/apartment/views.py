@@ -163,13 +163,17 @@ class ApartmentFilterView(generics.ListAPIView):
     queryset = Apartment.objects.all()
     serializer_class = ApartmentSerializer
 
+    # filter_backends = [filters.SearchFilter]
+    # search_fields = ['city', 'start_booking', 'end_booking', 'sleep_places']
+
     def post(self, request, *args, **kwargs):
         city_name = request.data['city']
         start_booking = request.data['start_booking']
         end_booking = request.data['end_booking']
+        guests = request.data['guests']
 
         if start_booking != "" and end_booking != "":
-            apartments = Apartment.objects.filter(city__name=city_name).exclude(
+            apartments = Apartment.objects.filter(city__name=city_name, sleeping_places__gte=guests).exclude(
                 id__in=Booking.objects.filter(
                     Q(start_booking__lte=start_booking, end_booking__gte=start_booking) |
                     Q(start_booking__lte=end_booking, end_booking__gte=end_booking) |
