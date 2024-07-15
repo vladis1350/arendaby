@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import "./popup.css";
 import {FaMinus, FaPlus} from 'react-icons/fa';
 
-const PopupComponent = ({onClose, count_guest}) => {
+const PopupComponent = ({onClose, count_guest, isFilter = false}) => {
     const [adults, setAdults] = useState(1);
     const [children, setChildren] = useState(0);
     const childrenAges = Array.from({length: 17}, (_, idx) => idx + 1);
@@ -61,13 +61,16 @@ const PopupComponent = ({onClose, count_guest}) => {
                 </div>
                 <div className={"row"}>
                     <div className={"col"}>
-                        {(adults + children) <= count_guest ?
+                        {isFilter === false && (adults + children) <= count_guest ?
                             (<button onClick={handleCloseBlock}
-                                     className="btn btn-success count-guest-apply">Применить</button>) :
-                            (<p className={"text-danger"}>Внимание! Жильё вмещает
-                                максимум {count_guest} гостей.
-                                Уменьшите их
-                                количество или найдите более вместительный объект.</p>)
+                                     className="btn btn-success count-guest-apply">Применить</button>) : isFilter === true ? (
+                                    <button onClick={handleCloseBlock}
+                                            className="btn btn-success count-guest-apply">Применить</button>
+                                ) :
+                                (<p className={"text-danger"}>Внимание! Жильё вмещает
+                                    максимум {count_guest} гостей.
+                                    Уменьшите их
+                                    количество или найдите более вместительный объект.</p>)
                         }
                     </div>
                 </div>

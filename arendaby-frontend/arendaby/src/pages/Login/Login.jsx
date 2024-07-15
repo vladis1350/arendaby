@@ -6,6 +6,7 @@ import {login} from "../../Redux/authReducer";
 import {showMessageInfo} from "../../Redux/messagesReducer";
 import Navbar from "../../components/navbar/navbar";
 import LoadingIndicator from "../../components/LoadingIndicator";
+import "./Login.css"
 
 export default function Login() {
     const [username, setUsername] = useState("")
@@ -44,35 +45,38 @@ export default function Login() {
     return (
         <Fragment>
             <Navbar/>
-            <div className="col-md-4 login-form">
-                <form onSubmit={handleSubmit}>
-                    <fieldset>
-                        <legend className='login-form-title'>Авторизация</legend>
-                        <div>
-                            <label className="form-label mt-4">Логин</label>
-                            <input type="text" className="form-control"
-                                   value={username}
-                                   onChange={(e) => setUsername(e.target.value)}
-                                   placeholder="Username"/>
+            <div className={"container"}>
+                <div className={"col-4"}></div>
+                <div className="col-5 login-form">
+                    <form onSubmit={handleSubmit}>
+                        <fieldset>
+                            <legend className='login-form-title'>Авторизация</legend>
+                            <div>
+                                <label className="form-label mt-4"><strong>Логин</strong></label>
+                                <input type="text" className="form-control"
+                                       value={username}
+                                       onChange={(e) => setUsername(e.target.value)}
+                                       placeholder="Username"/>
+                            </div>
+                            <div>
+                                <label className="form-label mt-4"><strong>Пароль</strong></label>
+                                <input type="password" className="form-control"
+                                       value={password}
+                                       onChange={(e) => setPassword(e.target.value)}
+                                       placeholder="Password"/>
+                            </div>
+                        </fieldset>
+                        <br/>
+                        {loading && <LoadingIndicator/>}
+                        <div className="login-submit">
+                            <button type="submit" className={"btn btn-success"}>Войти</button>
                         </div>
-                        <div>
-                            <label className="form-label mt-4">Пароль</label>
-                            <input type="password" className="form-control"
-                                   value={password}
-                                   onChange={(e) => setPassword(e.target.value)}
-                                   placeholder="Password"/>
-                        </div>
-                    </fieldset>
-                    <br/>
-                    {loading && <LoadingIndicator/>}
-                    <div className="login-submit">
-                        <button type="submit">Войти</button>
-                    </div>
-                    <Link className="login-register" to="/register">
-                        Регистрация
-                    </Link>
-            {/*        <button type="submit" className="btn btn-success btn-login-form">{name}</button>*/}
-                </form>
+                        <Link className="login-register" to="/register">
+                            Регистрация
+                        </Link>
+                        {/*        <button type="submit" className="btn btn-success btn-login-form">{name}</button>*/}
+                    </form>
+                </div>
             </div>
         </Fragment>
     );

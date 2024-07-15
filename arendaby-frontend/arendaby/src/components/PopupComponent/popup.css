@@ -11,6 +11,25 @@
     z-index: 999;
 }
 
+.hide-block {
+    position: fixed;
+    width: 100%;
+    padding-top: 3px;
+    display: flex;
+    z-index: 999;
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height 0.5s ease-in-out;
+}
+
+.hide-block .open {
+    height: 350px;
+}
+
+.hide-block .close {
+    height: 0;
+}
+
 .booking-calendar {
     padding-top: 20px;
     padding-left: 20px;
@@ -18,7 +37,7 @@
     text-align: center;
 }
 
-.overlay .row {
+.overlay .row, .hide-block .row {
     border-bottom: #20c997 solid 1px;
     padding-top: 15px;
     padding-bottom: 15px;
@@ -41,7 +60,7 @@
     width: 350px;
 }
 
-.overlay .row label {
+.overlay .row label, .hide-block .row label {
     padding: 0 10px;
 }
 
@@ -49,7 +68,7 @@
     font-size: 14px;
 }
 
-.overlay .row button {
+.overlay .row button, .hide-block .row button {
     border-radius: 50%;
     width: 40px;
     height: 40px;
@@ -57,7 +76,7 @@
     padding: 5px 5px;
 }
 
-.overlay .row button.count-guest-apply {
+.overlay .row button.count-guest-apply, .hide-block .row button.count-guest-apply {
     width: 150px;
     border-radius: 10px;
 }
@@ -67,4 +86,12 @@
     padding: 20px;
     border-radius: 20px;
     text-align: center;
+}
+
+.hide-block-popup {
+    background: white;
+    padding: 20px;
+    border-radius: 5px;
+    text-align: center;
+    transition: max-height 0.5s ease-in-out;
 }

@@ -1,4 +1,4 @@
-import React, {useCallback, useState} from "react";
+import React, {Fragment, useCallback, useState} from "react";
 import {Link, Navigate, useNavigate} from "react-router-dom";
 // context
 import {useDispatch, useSelector} from "react-redux";
@@ -9,15 +9,12 @@ import {showMessageInfo} from "../../Redux/messagesReducer";
 import {authUser} from "../../services/Api";
 // components
 import "./Register.css";
+import Navbar from "../../components/navbar/navbar";
 
 const title = "Регистрация";
 
 function CheckPassword(password, password2) {
-    if (password === password2) {
-        return true;
-    } else {
-        return false;
-    }
+    return password === password2;
 }
 
 export default function Register() {
@@ -79,73 +76,78 @@ export default function Register() {
     };
 
     return (
-        <div className="container">
-            <div className="form__reg">
-                <div className="reg-header">
-                    <h1>Регистрация</h1>
+        <Fragment>
+            <Navbar/>
+            <div className="container">
+                <div className="form__reg">
+                    <div className="reg-header">
+                        <h1>Регистрация</h1>
+                    </div>
+                    <form className="form" onSubmit={handleSubmit}>
+                        <div className="row">
+                            <label className="form-label mt-2">Имя пользователя:</label>
+                            <div className="col-sm-7">
+                                <input className="form-control"
+                                       type="text"
+                                       id="username"
+                                       name="username"
+                                       value={formData.username}
+                                       onChange={handleChange}
+                                       required
+                                />
+                            </div>
+                        </div>
+                        <div className="row">
+                            <label className="form-label mt-2">Почта:</label>
+                            <div className="col-sm-7">
+                                <input className="form-control"
+                                       type="text"
+                                       id="email"
+                                       name="email"
+                                       value={formData.email}
+                                       onChange={handleChange}
+                                       required
+                                />
+                            </div>
+                        </div>
+                        <div className="row">
+                            <label className="form-label mt-2">Пароль:</label>
+                            <div className="col-sm-7">
+                                <input className="form-control"
+                                       type="password"
+                                       id="password"
+                                       name="password"
+                                       value={formData.password}
+                                       onChange={handleChange}
+                                       required
+                                />
+                            </div>
+                        </div>
+                        <div className="row">
+                            <label className="form-label mt-2">Повторите пароль:</label>
+                            <div className="col-sm-7">
+                                <input className="form-control"
+                                       type="password"
+                                       id="password2"
+                                       name="password2"
+                                       value={formData.password2}
+                                       onChange={handleChange}
+                                       required
+                                />
+                            </div>
+                        </div>
+                        <br/>
+                        <div className="row">
+                            <div className={"col"}>
+                                <button type="submit" className={"btn btn-success reg-btn"}>Зарегистрироваться</button>
+                            </div>
+                        </div>
+                        <Link className="login-register" to="/login">
+                            У меня уже есть аккаунт
+                        </Link>
+                    </form>
                 </div>
-                <form className="form" onSubmit={handleSubmit}>
-                    <div className="row">
-                        <label className="form-label mt-2">Имя пользователя:</label>
-                        <div className="col-sm-3">
-                            <input className="form-control"
-                                   type="text"
-                                   id="username"
-                                   name="username"
-                                   value={formData.username}
-                                   onChange={handleChange}
-                                   required
-                            />
-                        </div>
-                    </div>
-                    <div className="row">
-                        <label className="form-label mt-2">Почта:</label>
-                        <div className="col-sm-3">
-                            <input className="form-control"
-                                   type="text"
-                                   id="email"
-                                   name="email"
-                                   value={formData.email}
-                                   onChange={handleChange}
-                                   required
-                            />
-                        </div>
-                    </div>
-                    <div className="row">
-                        <label className="form-label mt-2">Пароль:</label>
-                        <div className="col-sm-3">
-                            <input className="form-control"
-                                   type="password"
-                                   id="password"
-                                   name="password"
-                                   value={formData.password}
-                                   onChange={handleChange}
-                                   required
-                            />
-                        </div>
-                    </div>
-                    <div className="row">
-                        <label className="form-label mt-2">Повторите пароль:</label>
-                        <div className="col-sm-3">
-                            <input className="form-control"
-                                   type="password"
-                                   id="password2"
-                                   name="password2"
-                                   value={formData.password2}
-                                   onChange={handleChange}
-                                   required
-                            />
-                        </div>
-                    </div>
-                    <br/>
-                    <div className="reg-submit">
-                        <button type="submit">Зарегистрироваться</button>
-                    </div>
-                    <Link className="login-register" to="/login">
-                        У меня уже есть аккаунт
-                    </Link>
-                </form>
             </div>
-        </div>
+        </Fragment>
     );
 }

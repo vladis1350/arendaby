@@ -22,8 +22,13 @@
     margin-top: 20px;
 }
 
-.form-control {
+input.form-control {
     width: 400px;
+}
+
+.reg-btn {
+    padding: 5px 10px;
+    width: 200px;
 }
 
 .form {

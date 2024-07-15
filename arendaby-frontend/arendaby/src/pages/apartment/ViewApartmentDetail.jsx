@@ -8,6 +8,7 @@ import './apartment.css';
 import Loader from "../../components/Loader/ClipLoader";
 import BookingCalendar from "../../components/BoockingCalendar/BookingCalendar";
 import PopupComponent from "../../components/PopupComponent/PopupComponent"
+import {useNavigate} from 'react-router-dom';
 
 export default function ViewApartmentDetail() {
     const {isLoggedIn, userId} = useSelector((state) => state.auth);
@@ -22,6 +23,7 @@ export default function ViewApartmentDetail() {
     const [adults, setAdults] = useState(1);
     const [children, setChildren] = useState(0);
     const [selectedDates, setSelectedDates] = useState([]);
+    const navigate = useNavigate();
 
     const formatDate = (dateString) => {
         const date = new Date(dateString);
@@ -103,17 +105,21 @@ export default function ViewApartmentDetail() {
     }
 
     const toBooking = async () => {
-        const formDataToSend = new FormData();
-        formDataToSend.append('client', userId);
-        formDataToSend.append('apartment', apart_id);
-        formDataToSend.append('start_booking', formatDate(selectedDates[0]));
-        formDataToSend.append('end_booking', formatDate(selectedDates[1]));
-        formDataToSend.append('isBooking', false);
-        const response = await createBooking(formDataToSend);
-        if (response.status === 201) {
-            alert("Бронь создана!");
+        if (isLoggedIn) {
+            const formDataToSend = new FormData();
+            formDataToSend.append('client', userId);
+            formDataToSend.append('apartment', apart_id);
+            formDataToSend.append('start_booking', formatDate(selectedDates[0]));
+            formDataToSend.append('end_booking', formatDate(selectedDates[1]));
+            formDataToSend.append('isBooking', false);
+            const response = await createBooking(formDataToSend);
+            if (response.status === 201) {
+                alert("Бронь создана!");
+            } else {
+                alert("Что то пошло не так!");
+            }
         } else {
-            alert("Что то пошло не так!");
+            navigate("/login");
         }
     }
 
