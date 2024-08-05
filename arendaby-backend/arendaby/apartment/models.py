@@ -36,11 +36,11 @@ class Apartment(models.Model):
     city = models.ForeignKey(City, on_delete=models.CASCADE, related_name='cities', verbose_name="Город")
     name = models.CharField(max_length=100, null=False, verbose_name="Название")
     street_name = models.CharField(max_length=200, null=False, verbose_name="Название улицы", default="-")
-    number_house = models.CharField(max_length=5, null=False, verbose_name="Номер дома", default="-")
-    number_block = models.CharField(max_length=5, null=False, verbose_name="Номер корпуса", default="-")
+    number_house = models.CharField(max_length=15, null=False, verbose_name="Номер дома", default="-")
+    number_block = models.CharField(max_length=15, null=False, verbose_name="Номер корпуса", default="-")
 
     # общие сведения
-    square = models.CharField(default=1, max_length=5, verbose_name="Площадь апартаментов")
+    square = models.CharField(default=1, max_length=15, verbose_name="Площадь апартаментов")
     sleeping_places = models.IntegerField(default=1, verbose_name="Спальных мест")
     number_floor = models.IntegerField(default=1, verbose_name="Этаж")
     count_floor = models.IntegerField(default=1, verbose_name="Количество этажей")
@@ -83,11 +83,42 @@ class Booking(models.Model):
                                blank=False, null=False)
     apartment = models.ForeignKey(Apartment, on_delete=models.CASCADE, related_name='booking_set',
                                   verbose_name='Апартаменты', blank=False, null=False)
-    start_booking = models.DateTimeField(verbose_name="Бронь с")
-    end_booking = models.DateTimeField(verbose_name="Бронь по")
+    start_booking = models.DateField(verbose_name="Бронь с")
+    end_booking = models.DateField(verbose_name="Бронь по")
     isBooking = models.BooleanField(default=False)
 
     @property
     def total_price(self):
         total_days = (self.end_booking - self.start_booking).days
         return self.apartment.price * total_days
+
+
+class Rating(models.Model):
+    apartment = models.ForeignKey(Apartment, on_delete=models.CASCADE, related_name='rating_set',
+                                  verbose_name='Апартаменты', blank=False, null=False)
+    client = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_rating", verbose_name="Пользователь",
+                               default=False)
+    rating = models.IntegerField()
+
+    class Meta:
+        verbose_name = "Оценка апартаментов"
+        verbose_name_plural = "Оценки апартаментов"
+
+    def __str__(self):
+        return f'Review for {self.apartment.name} - Rating: {self.rating}'
+
+
+class Comment(models.Model):
+    apartment = models.ForeignKey(Apartment, on_delete=models.CASCADE, related_name='comment_set',
+                                  verbose_name='Апартаменты', blank=False, null=False)
+    client = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_comment", verbose_name="Пользователь",
+                               default=False)
+    comment = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Комментарий апартаментов"
+        verbose_name_plural = "Комментарии апартаментов"
+
+    def __str__(self):
+        return f'Review for {self.apartment.name} - Comment: {self.comment}'

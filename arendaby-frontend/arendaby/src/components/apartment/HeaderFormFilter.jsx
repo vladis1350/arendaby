@@ -1,8 +1,9 @@
-import React, {useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {api} from "../../services/Api";
-import BookingCalendar from "../BoockingCalendar/BookingCalendar";
+import BookingCalendar from "../BookingCalendar/BookingCalendar";
 import {FaSearch} from 'react-icons/fa';
 import {useNavigate} from 'react-router-dom';
+import SelectGuestsComponent from "../PopupComponent/SelectGuestsComponent";
 
 export default function HeaderFormFilter() {
     const [searchTerm, setSearchTerm] = useState('');
@@ -11,9 +12,32 @@ export default function HeaderFormFilter() {
     const [isSearchFocused, setIsSearchFocused] = useState(false);
     const [selectedDates, setSelectedDates] = useState([]);
     const navigate = useNavigate();
+    const [guest, setGuest] = useState(1);
+    const [guestAdult, setGuestAdult] = useState(1);
+    const [guestChild, setGuestChild] = useState(0);
+    const [hideGuestBlock, setHideGuestBlock] = useState(false);
+    const blockRef = useRef(null);
+
 
     const searchInputStyle = {
         border: "none",
+    }
+
+    useEffect(() => {
+        const handleScroll = () => {
+            if (window.scrollY > 50 && hideGuestBlock) {
+                setHideGuestBlock(false);
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+        };
+    }, [hideGuestBlock]);
+
+    const showGuestsBlock = () => {
+        setHideGuestBlock(!hideGuestBlock)
     }
 
     const handleDateSelection = (start, end) => {
@@ -27,8 +51,9 @@ export default function HeaderFormFilter() {
     };
 
     const redirectTo = () => {
+        setGuest(guestAdult + guestChild);
         if (city && selectedDates.length !== 0) {
-            navigate(`/apartment-filter?city=${selectedCity.id}&start_booking=${formatDate(selectedDates[0])}&end_booking=${formatDate(selectedDates[1])}`);
+            navigate(`/apartment-filter?city=${selectedCity.id}&start_booking=${formatDate(selectedDates[0])}&end_booking=${formatDate(selectedDates[1])}&guests=${guestAdult+guestChild}`);
         } else {
             navigate(`/apartment/city/${selectedCity.id}`);
         }
@@ -60,8 +85,17 @@ export default function HeaderFormFilter() {
         setCity(response.data);
     };
 
+    const handleAdults = (adultValue) => {
+        setGuestAdult(adultValue);
+    }
+
+    const handleChild = (childValue) => {
+        setGuestChild(childValue);
+        setHideGuestBlock(!hideGuestBlock)
+    }
+
     return (
-        <div className="conatainer apart-filter-panel">
+        <div ref={blockRef} className="conatainer apart-filter-panel">
             <div className="row">
                 <div className="col-4 col-3-change">
                     <div className={"input-wrapper"}>
@@ -76,20 +110,19 @@ export default function HeaderFormFilter() {
                     <BookingCalendar getPeriod={handleDateSelection}/>
                 </div>
                 <div className={"guests"}>
-                    <div className={"input-wrapper-guests"}>
-                        <span className="info-guests">2 взрослых, без детей</span>
+                    <div className={"input-wrapper-guests"} onClick={showGuestsBlock}>
+                        <span
+                            className="info-guests">{guestAdult} взрослых, {guestChild > 0 ? guestChild + " детей" : "без детей"}</span>
                         <label>Гости</label>
                     </div>
+                    <SelectGuestsComponent hide={hideGuestBlock} guestAdults={handleAdults}
+                                           guestChildren={handleChild}/>
                 </div>
                 <div className={"col-2 fa-search-block"}>
                     <div onClick={redirectTo} className={"search-button"}>
                         <label>Найти</label>
                         <FaSearch size={30} className={"fa-search"}/>
                     </div>
-                    {/*<div onClick={redirectTo} className={"search-button"}>*/}
-                    {/*    <label>Найти</label>*/}
-                    {/*    <FaSearch size={30} className={"fa-search"}/>*/}
-                    {/*</div>*/}
                 </div>
             </div>
             <div className="row">

@@ -59,10 +59,29 @@ export const getUserBooking = async (user_id) =>
 export const getIdea = async (v_id) =>
     api.get(`/api/v-ideas/idea/${v_id}`);
 
+export const getRating = async (apart_id, user_id) =>
+    api.get(`/api/apartment/rating/${apart_id}/${user_id}`);
+
+export const getComment = async (apart_id) =>
+    api.get(`/api/apartment/comment/${apart_id}`);
+
+export const createRating = async (data) => {
+    const cfg = {headers: {"Content-Type": "multipart/form-data"}};
+    return api.post(`/api/apartment/rating/create/`, data, cfg);
+}
+
+export const createComment = async (data) => {
+    const cfg = {headers: {"Content-Type": "multipart/form-data"}};
+    return api.post(`/api/apartment/comment/create/`, data, cfg);
+}
+
 export const filterApartment = async (dataFilter) => {
     const cfg = {headers: {"Content-Type": "multipart/form-data"}};
     return api.post(`/api/apartment/booking/filter/`, dataFilter, cfg);
 }
+
+export const getBookedDates = async (apart_id) =>
+    api.get(`/api/bookings/${apart_id}`);
 
 export const getApartment = async (city) =>
     api.get(`/api/apartment/city/${city}`);

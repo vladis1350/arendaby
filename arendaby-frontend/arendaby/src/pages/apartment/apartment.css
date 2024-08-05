@@ -69,12 +69,66 @@
 }
 
 .apartment-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     font-size: 13px;
     padding-top: 15px;
-    padding-left: 30px;
+    padding-left: 10px;
+}
+
+.link-no-decoration {
+    text-decoration: none;
+}
+
+.apart-type {
+    text-decoration: none;
+    color: #8c8c8c;
+    font-weight: bold;
+}
+
+.apart-title {
+    color: #0e1e02;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.sleeping_places span {
+    padding-right: 10px;
+    color: #8c8c8c;
+}
+
+.apart-address {
+    margin-top: auto;
+    color: #8c8c8c;
+}
+
+.apart-price {
+    margin-top: auto;
+    color: #0e1e02;
+    font-weight: bold;
+}
+
+.apart-rating span {
+    padding-left: 5px;
+    text-align: right;
+    /*font-size: 12px;*/
+}
+
+.apart-comment span {
+    font-size: 12px;
+    padding-left: 5px;
+}
+
+.apart-price span {
+    font-size: 12px;
+    padding-left: 5px;
 }
 
 .apartment-price {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     margin-top: 25px;
     margin-bottom: 25px;
     border-left: #20c997 solid 1px;
@@ -164,7 +218,6 @@
 }
 
 .main-image {
-    /*position: relative;*/
     width: 670px;
     height: 445px;
     left: -20px;
@@ -184,18 +237,24 @@
 }
 
 .profile-image-block {
-    width: 100%;
+    width: 150px;
     height: 150px;
-    position: relative;
+    border-radius: 50%;
+    overflow: hidden;
     display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 10px auto;
+}
+
+.comment-block span {
+    padding-left: 10px;
 }
 
 .profile-image-block img {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
-    border-radius: 50%;
-    margin: 0 auto;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
 }
 
 .apart-view-right-block {
@@ -221,4 +280,34 @@
 .row-guests {
     padding-left: 10px;
     padding-top: 20px;
+}
+
+.user_photo {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 15px auto;
+}
+
+.row-comment {
+    padding-top: 15px;
+}
+
+.user_photo img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    margin: 10px;
+}
+
+.user-comment {
+    padding: 10px;
+}
+
+.user-comment span {
+    font-weight: bold;
 }

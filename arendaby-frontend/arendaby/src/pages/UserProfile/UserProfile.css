@@ -1,16 +1,25 @@
 .avatar-block {
-    display: flex;
-    max-width: 200px;
-    max-height: 200px;
+    width: 180px;
+    height: 180px;
     border-radius: 50%;
     overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 15px auto;
+}
+
+.avatar-block img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    margin: 10px;
 }
 
 .profile-left-block {
     margin-top: 20px;
     padding-top: 10px;
     border-radius: 30px;
-    padding-left: 40px;
     text-align: center;
     background-color: #ffefef;
 }
@@ -67,7 +76,7 @@
 }
 
 .user-reservations-block {
-    position: absolute;
+    /*position: absolute;*/
     overflow: hidden;
     max-height: 0;
     transition: max-height 0.5s ease-in-out;
@@ -76,8 +85,17 @@
 
 .open {
     max-height: 100%;
+    /*width: 100%;*/
 }
 
 .closed {
     max-height: 0;
+}
+
+.user-items {
+    padding-left: 0;
+}
+
+.user-item-header {
+    margin-left: 0;
 }

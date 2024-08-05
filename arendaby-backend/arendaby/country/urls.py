@@ -7,5 +7,5 @@ urlpatterns = [
     path('city/', CityList.as_view(), name='city list'),
     path('city/<int:pk>', CityById.as_view(), name='city by id'),
     path('city/search/', SearchingCityList.as_view(), name='searching-city'),
-    path('cities/<int:pk>', CitiesListByCountry.as_view(), name='city list'),
+    path('cities/<int:country_id>', CitiesListByCountry.as_view(), name='city list'),
 ]

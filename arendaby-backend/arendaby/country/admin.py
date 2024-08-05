@@ -5,13 +5,13 @@ from .models import Country, City, CityPhotos
 
 @admin.register(Country)
 class CountryAdmin(admin.ModelAdmin):
-    list_display = ("name", "description")
+    list_display = ("id", "name", "description")
     ordering = ["name"]
 
 
 @admin.register(City)
 class CityAdmin(admin.ModelAdmin):
-    list_display = ('name', 'description', 'country')
+    list_display = ('id', 'name', 'description', 'country', 'image')
     ordering = ["name", 'country']
 
 

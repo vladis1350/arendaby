@@ -16,6 +16,7 @@ export default function ApartmentFilterResult() {
     const [cityName, setCityName] = useState('');
     const start_booking = searchParams.get('start_booking');
     const end_booking = searchParams.get('end_booking');
+    const guests = searchParams.get('guests');
 
     const fetchCity = async () => {
         const response = await getCity(city_id);
@@ -30,6 +31,7 @@ export default function ApartmentFilterResult() {
     const fetchApartmentByFilter = async () => {
         const formDataToSend = new FormData();
         formDataToSend.append('city', cityName);
+        formDataToSend.append('guests', guests);
         if (start_booking !== '') {
             formDataToSend.append('start_booking', start_booking);
         } else {

@@ -7,10 +7,11 @@ import {Link, useParams} from "react-router-dom";
 
 export default function City() {
     const [city, setCityList] = useState([])
-    const {country, id} = useParams();
+    const {country, country_id} = useParams();
+    const decl = require('ru-declensions-geo').GeoNamesDeclensions;
 
     const fetchCities = async () => {
-        const resp = await getCities(id);
+        const resp = await getCities(country_id);
         setCityList(resp.data);
     }
 
@@ -42,7 +43,7 @@ export default function City() {
                             <div className="row">
                                 <div className="col-lg col-item">
                                     <h1>Спланируйте поездку легко и быстро</h1>
-                                    <span>Выберите вид отдыха и посмотрите лучшие места в {country}</span>
+                                    <span>Выберите вид отдыха и посмотрите лучшие места в {decl.getCases(country)[decl.getCases(country).length - 1]}</span>
                                 </div>
                             </div>
                             <div className="row cities-row">

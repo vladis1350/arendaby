@@ -1,13 +1,15 @@
 import {Link} from "react-router-dom";
 import {Carousel} from "../carousel/Carousel";
-import React from "react";
+import React, {useState} from "react";
+import {FaRubleSign, FaStar} from 'react-icons/fa';
+import {getRating, getComment, getCity} from '../../services/Api'
 
 const ApartmentBody = ({apartmentList}) => {
 
     return (
         <div className="col-9 center-apart-block">
             {apartmentList.map(item => (
-                <Link to={`/apartment/${item.id}`}>
+                <Link to={`/apartment/${item.id}`} className="link-no-decoration">
                     <div className="row apartment-row-items">
                         <div className="col-4 apart-img-block">
                             <Carousel>
@@ -22,17 +24,21 @@ const ApartmentBody = ({apartmentList}) => {
                         <div className="col-6 apartment-info">
                             <p className={"apart-type"}>{item.type.type_name}</p>
                             <p className={"apart-title"}>{item.name}</p>
-                            <p className={"apart-address"}>{item.address}</p>
                             {/*<p className={"apart-description"}>{item.descriptions}</p>*/}
-                            <p className={"sleeping_places"}>Количество спальных
-                                мест: {item.sleeping_places}</p>
+                            <p className={"sleeping_places"}>
+                                <span>Спальных мест: {item.sleeping_places}</span>
+                                <span>Комнат: {item.count_room}</span>
+                            </p>
+                            <p className={"apart-address"}>{item.street_name + " " + item.number_house}</p>
                         </div>
                         <div className="col-2 apartment-price">
-                            <span className={"apart-price"}>{item.price} за сутки</span>
+                            <p className={"apart-rating"}>{item.rating.length === 0 ? 0 : item.rating.reduce((acc, rating) => acc + rating.rating, 0)} <span><FaStar/></span></p>
+                            <p className={"apart-comment"}>{item.comment.length}<span>Отзывов</span></p>
+                            <p className={"apart-price"}>{item.price} <FaRubleSign/><span>за сутки</span></p>
                         </div>
                     </div>
                 </Link>
-            ))}
+                ))}
         </div>
     );
 }

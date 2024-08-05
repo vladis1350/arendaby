@@ -2,9 +2,10 @@ from country.models import City
 from country.serializers import CitySerializer
 from rest_framework import serializers
 from user.models import User
-from user.serializers import UserSerializer
+from user.serializers import UserSerializer, UserProfileSerializer
 
-from .models import ApartmentType, Apartment, ApartmentPhoto, GroupApartmentType, Booking
+from .models import ApartmentType, Apartment, ApartmentPhoto, GroupApartmentType, Booking, Rating, Comment
+
 
 class ApartmentTypeSerializer(serializers.ModelSerializer):
     class Meta:
@@ -33,9 +34,25 @@ class BookingListSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class RatingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Rating
+        fields = ['id', 'apartment', 'client', 'rating']
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    client = UserSerializer(required=False)
+
+    class Meta:
+        model = Comment
+        fields = ['id', 'apartment', 'client', 'comment', 'created_at']
+
+
 class ApartmentSerializer(serializers.ModelSerializer):
     type = ApartmentTypeSerializer(required=False)
     city = CitySerializer(required=False)
+    rating = RatingSerializer(source='rating_set', many=True)
+    comment = CommentSerializer(source='comment_set', many=True)
     images = ApartmentPhotoSerializer(source="apartmentphoto_set", many=True)
     booking = BookingListSerializer(source="booking_set", many=True)
     landlord = UserSerializer(required=False)
@@ -43,9 +60,9 @@ class ApartmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Apartment
         fields = (
-            'id', 'type', 'city', 'landlord', 'images', 'name', 'street_name', 'number_house', 'number_block',
+            'id', 'type', 'city', 'rating', 'comment', 'landlord', 'images', 'name', 'street_name', 'number_house', 'number_block',
             'square', 'number_floor', 'count_floor', 'sleeping_places', 'elevator', 'count_room', 'price',
-            'descriptions', 'booking', )
+            'descriptions', 'booking',)
 
 
 class ApartmentCreateSerializer(serializers.ModelSerializer):
@@ -89,6 +106,8 @@ class GroupApartmentTypeSerializer(serializers.ModelSerializer):
 
 
 class BookingSerializer(serializers.ModelSerializer):
+    start_booking = serializers.DateField(format='%d-%m-%Y')
+    end_booking = serializers.DateField(format='%d-%m-%Y')
     apartment = ApartmentSerializer(required=False)
     client = UserSerializer(required=False)
 
@@ -98,6 +117,8 @@ class BookingSerializer(serializers.ModelSerializer):
 
 
 class CreateBookingSerializer(serializers.ModelSerializer):
+    start_booking = serializers.DateField(format='%d-%m-%Y')
+    end_booking = serializers.DateField(format='%d-%m-%Y')
     client = serializers.CharField(source='user.id')
     apartment = serializers.CharField(source='apartment.id')
 
@@ -116,3 +137,40 @@ class CreateBookingSerializer(serializers.ModelSerializer):
 
         return booking
 
+
+class CreateRatingSerializer(serializers.ModelSerializer):
+    client = serializers.CharField(source='user.id')
+    apartment = serializers.CharField(source='apartment.id')
+
+    class Meta:
+        model = Rating
+        fields = ('client', 'apartment', 'rating')
+
+    def create(self, validated_data):
+        apart_id = validated_data.pop('apartment')['id']
+        client_id = validated_data.pop('user')['id']
+
+        client = User.objects.get(pk=client_id)
+        apartment = Apartment.objects.get(pk=apart_id)
+        rating = Rating.objects.create(client=client, apartment=apartment, **validated_data)
+
+        return rating
+
+
+class CreateCommentSerializer(serializers.ModelSerializer):
+    client = serializers.CharField(source='user.id')
+    apartment = serializers.CharField(source='apartment.id')
+
+    class Meta:
+        model = Comment
+        fields = ('client', 'apartment', 'comment', 'created_at')
+
+    def create(self, validated_data):
+        apart_id = validated_data.pop('apartment')['id']
+        client_id = validated_data.pop('user')['id']
+
+        client = User.objects.get(pk=client_id)
+        apartment = Apartment.objects.get(pk=apart_id)
+        comment = Comment.objects.create(client=client, apartment=apartment, **validated_data)
+
+        return comment

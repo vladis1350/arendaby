@@ -12,6 +12,7 @@ export default function Apartment({isFilter, filteredList}) {
     const {id} = useParams();
     const [cityName, setCityName] = useState("");
     const [cityUrlImage, setCityUrlImage] = useState("");
+    const decl = require('ru-declensions-geo').GeoNamesDeclensions;
 
     const formatDate = (dateString) => {
         const date = new Date(dateString);
@@ -21,7 +22,8 @@ export default function Apartment({isFilter, filteredList}) {
     const fetchCity = async () => {
         const response = await getCity(id);
         if (response.status === 200) {
-            setCityName(response.data.name);
+            const city = decl.getCases(response.data.name)
+            setCityName(city[city.length - 1]);
             setCityUrlImage(response.data.image);
         } else {
             alert("Ошибка получения данных!");
@@ -47,12 +49,12 @@ export default function Apartment({isFilter, filteredList}) {
             <div className="container container-primary">
                 <div className="row apartment-row-title">
                     <div className="col-lg">
-                        <h4><strong>Найдём, где остановиться в {cityName}e: {apartment.length} вариантов</strong></h4>
+                        <h4><strong>Найдём, где остановиться в {cityName}: {apartment.length} вариантов</strong></h4>
                     </div>
                 </div>
                 <div className="row">
                     <Filter/>
-                        <ApartmentBody apartmentList={apartment}/>
+                    <ApartmentBody apartmentList={apartment}/>
                 </div>
             </div>
         </Fragment>
