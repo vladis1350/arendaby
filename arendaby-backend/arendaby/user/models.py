@@ -16,7 +16,7 @@ class UserProfile(models.Model):
     genders = ArrayField(models.CharField(max_length=1, choices=GENDER_CHOICES), blank=True, null=True)
     email = models.CharField(max_length=50, default="user@example.com")
     phone = models.CharField(max_length=15, null=True, verbose_name="Телефон")
-    image = models.ImageField(upload_to="profile_image/", null=True, default='user/noimage.webp',
+    image = models.ImageField(upload_to="profile_image/", null=True, default='user/noimage.png',
                               verbose_name="Фото профиля")
     created = models.DateTimeField(auto_now_add=True, verbose_name="Создан")
 

@@ -8,7 +8,7 @@ export default function ApartmentHeader({city, imgUrl, apartment}) {
             backgroundImage: `url(${imgUrl})`,
         }}>
             <div className="part-header-capacity">
-                <h1 className=''><strong>Снять квартиру посуточно в {city}e</strong></h1>
+                <h1 className=''><strong>Снять квартиру посуточно в {city}</strong></h1>
                 <div className="col-lg">
                     <h2><strong>{apartment.length} предложений</strong></h2>
                 </div>

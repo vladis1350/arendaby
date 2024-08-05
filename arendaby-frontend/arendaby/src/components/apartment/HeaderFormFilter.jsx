@@ -1,6 +1,6 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {api} from "../../services/Api";
-import BookingCalendar from "../BoockingCalendar/BookingCalendar";
+import BookingCalendar from "../BookingCalendar/BookingCalendar";
 import {FaSearch} from 'react-icons/fa';
 import {useNavigate} from 'react-router-dom';
 import SelectGuestsComponent from "../PopupComponent/SelectGuestsComponent";

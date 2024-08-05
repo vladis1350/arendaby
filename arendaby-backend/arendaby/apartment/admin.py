@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import ApartmentType, Apartment, ApartmentPhoto, GroupApartmentType, Booking
+from .models import ApartmentType, Apartment, ApartmentPhoto, GroupApartmentType, Booking, Rating, Comment
 
 
 @admin.register(ApartmentType)
@@ -11,9 +11,10 @@ class ApartmentTypeAdmin(admin.ModelAdmin):
 
 @admin.register(Apartment)
 class ApartmentAdmin(admin.ModelAdmin):
-    list_display = (
-        "name", "type", "city", "street_name", "number_house", "number_block", "square", "number_floor", "count_floor",
-        "sleeping_places", "elevator", "count_room", "price", "descriptions",)
+    list_display = ("id",
+                    "name", "type", "city", "street_name", "number_house", "number_block", "square", "number_floor",
+                    "count_floor",
+                    "sleeping_places", "elevator", "count_room", "price", "descriptions",)
     ordering = ["type", "city", "name", "square", "number_floor", "count_floor", "elevator", "count_room", "price",
                 "sleeping_places", ]
 
@@ -34,3 +35,15 @@ class GroupApartmentTypeAdmin(admin.ModelAdmin):
 class BookingAdmin(admin.ModelAdmin):
     list_display = ('apartment', 'start_booking', 'end_booking', 'total_price', 'client',)
     ordering = ['apartment', 'start_booking', ]
+
+
+@admin.register(Rating)
+class RatingAdmin(admin.ModelAdmin):
+    list_display = ('apartment', 'client', 'rating',)
+    ordering = ['rating']
+
+
+@admin.register(Comment)
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ('apartment', 'client', 'comment', 'created_at',)
+    ordering = ['comment', 'created_at', ]

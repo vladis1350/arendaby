@@ -6,9 +6,10 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from user.models import User
 
-from .models import Apartment, ApartmentType, ApartmentPhoto, GroupApartmentType, Booking
+from .models import Apartment, ApartmentType, ApartmentPhoto, GroupApartmentType, Booking, Rating, Comment
 from .serializers import ApartmentSerializer, ApartmentPhotoSerializer, ApartmentTypeSerializer, \
-    GroupApartmentTypeSerializer, ApartmentCreateSerializer, CreateBookingSerializer, BookingSerializer
+    GroupApartmentTypeSerializer, ApartmentCreateSerializer, CreateBookingSerializer, BookingSerializer, \
+    RatingSerializer, CommentSerializer, CreateCommentSerializer, CreateRatingSerializer
 
 tz = pytz.timezone('Europe/Moscow')
 
@@ -199,6 +200,25 @@ class BookingApartmentView(generics.CreateAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class CheckBookingApartmentView(generics.ListAPIView):
+    queryset = Booking.objects.all()
+    serializer_class = BookingSerializer
+
+    def list(self, request, *args, **kwargs):
+        apart_id = self.kwargs.get('apart_id')
+        if not apart_id:
+            return Response({"error": "Apartment is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            apartment = Apartment.objects.get(pk=apart_id)
+        except Apartment.DoesNotExist:
+            return Response({"error": "Apartment not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        bookingList = Booking.objects.filter(apartment=apartment)
+        serializer = self.get_serializer(bookingList, many=True)
+        return Response(serializer.data, status.HTTP_200_OK)
+
+
 class BookingUserApartmentView(generics.ListAPIView):
     queryset = Booking.objects.all()
     serializer_class = BookingSerializer
@@ -216,3 +236,95 @@ class BookingUserApartmentView(generics.ListAPIView):
         bookingList = Booking.objects.filter(client=user)
         serializer = self.get_serializer(bookingList, many=True)
         return Response(serializer.data, status.HTTP_200_OK)
+
+
+class RatingViewSet(generics.ListCreateAPIView):
+    queryset = Rating.objects.all()
+    serializer_class = RatingSerializer
+    permission_classes = (AllowAny,)
+
+    def list(self, request, *args, **kwargs):
+        apart_id = self.kwargs.get('apart_id')
+        user_id = self.kwargs.get('user_id')
+        if not apart_id:
+            return Response({"error": "Apartment is required."}, status=status.HTTP_400_BAD_REQUEST)
+        if not user_id:
+            return Response({"error": "User is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            apartment = Apartment.objects.get(pk=apart_id)
+            user = User.objects.get(pk=user_id)
+        except Apartment.DoesNotExist:
+            return Response({"error": "Apartment not found."}, status=status.HTTP_404_NOT_FOUND)
+        except User.DoesNotExist:
+            return Response({"error": "User not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        rating = Rating.objects.filter(apartment=apartment, client=user).first()
+        serializer = self.get_serializer(rating, many=False)
+        return Response(serializer.data, status.HTTP_200_OK)
+
+    def post(self, request, *args, **kwargs):
+        serializer = CreateRatingSerializer(data=request.data)
+        if serializer.is_valid():
+            rating = serializer.save()
+            return Response(status=status.HTTP_201_CREATED)
+        print(serializer.errors)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class CreateRatingViewSet(generics.ListCreateAPIView):
+    queryset = Rating.objects.all()
+    serializer_class = CreateRatingSerializer
+    permission_classes = (AllowAny,)
+
+    def post(self, request, *args, **kwargs):
+        serializer = CreateRatingSerializer(data=request.data)
+        if serializer.is_valid():
+            rating = serializer.save()
+            return Response(status=status.HTTP_201_CREATED)
+        print(serializer.errors)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class CommentViewSet(generics.ListCreateAPIView):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+    permission_classes = (AllowAny,)
+
+    def list(self, request, *args, **kwargs):
+        apart_id = self.kwargs.get('apart_id')
+        if not apart_id:
+            return Response({"error": "Apartment is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            apartment = Apartment.objects.get(pk=apart_id)
+        except Apartment.DoesNotExist:
+            return Response({"error": "Apartment not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        commentList = Comment.objects.filter(apartment=apartment)
+        serializer = self.get_serializer(commentList, many=True)
+        return Response(serializer.data, status.HTTP_200_OK)
+
+    def post(self, request, *args, **kwargs):
+        print("TYT")
+        serializer = CreateCommentSerializer(data=request.data)
+        if serializer.is_valid():
+            comment = serializer.save()
+            return Response(status=status.HTTP_201_CREATED)
+        print(serializer.errors)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class CreateCommentViewSet(generics.ListCreateAPIView):
+    queryset = Comment.objects.all()
+    serializer_class = CreateCommentSerializer
+    permission_classes = (AllowAny,)
+
+    def post(self, request, *args, **kwargs):
+        print("TYT")
+        serializer = CreateCommentSerializer(data=request.data)
+        if serializer.is_valid():
+            comment = serializer.save()
+            return Response(status=status.HTTP_201_CREATED)
+        print(serializer.errors)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

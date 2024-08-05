@@ -163,9 +163,10 @@ cython_debug/
 #.idea/
 =======
 /arendaby-backend/arendaby/.env
+/arendaby-backend/arendaby/media
 /arendaby-backend/venv
 /arendaby-frontend/arendaby/node_modules
-/arendaby-backend/media/places/
+#/arendaby-backend/media/places/
 
 .idea
 >>>>>>> cc0f444 (commit new project react and django)

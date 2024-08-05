@@ -1,9 +1,12 @@
 from rest_framework import generics, status
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from django.core.cache import cache
 
 from .models import Country, City
 from .serializers import CountrySerializer, CitySerializer
+
+cache.clear()
 
 
 class CountryList(generics.ListAPIView):
@@ -24,7 +27,7 @@ class CitiesListByCountry(generics.ListAPIView):
     permission_classes = [AllowAny]
 
     def list(self, request, *args, **kwargs):
-        id_country = super().get_object().id
+        id_country = self.kwargs.get('country_id')
         if not id_country:
             return Response({"error": "Country name is required."}, status=status.HTTP_400_BAD_REQUEST)
 

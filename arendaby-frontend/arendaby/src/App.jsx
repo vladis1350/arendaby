@@ -68,7 +68,7 @@ export default function App() {
                 <Route path="/logout" element={<Logout/>}/>
                 <Route path="/profile" element={<UserProfile/>}/>
                 <Route path="/register" element={<Register/>}/>
-                <Route path="/country/:country/:id" element={<City/>}/>
+                <Route path="/country/:country/:country_id" element={<City/>}/>
                 <Route path="/apartment/city/:id" element={<Apartment/>}/>
                 <Route path="/apartment-filter" element={<ApartmentFilterResult/>}/>
                 <Route path="/apartment/:apart_id" element={<ViewApartmentDetail/>}/>

@@ -8,7 +8,9 @@ import ruLocale from 'date-fns/locale/ru'; // импорт локали для �
 const BookingCalendar = ({getPeriod}) => {
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
+    const [error, setError] = useState('');
     const currentDate = new Date();
+    const [bookedDates, setBookedDates] = useState([]);
     const tomorrowDate = add(currentDate, {days: 1});
     const formattedCurrentDate = format(currentDate, 'd MMMM, EE', {locale: ruLocale});
     const formattedTomorrowDate = format(tomorrowDate, 'd MMMM, EE', {locale: ruLocale});

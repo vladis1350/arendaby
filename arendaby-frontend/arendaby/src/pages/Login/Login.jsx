@@ -15,6 +15,7 @@ export default function Login() {
     const {isLoggedIn} = useSelector((state) => state.auth);
     const navigate = useNavigate()
     const dispatch = useDispatch();
+    const [message, setMessage] = useState("");
 
     const handleSubmit = async (e) => {
         setLoading(true);
@@ -29,6 +30,8 @@ export default function Login() {
                         refreshToken: res.data.refresh,
                     })
                 )
+            } else {
+                 setMessage("Неверный логин или пароль!")
             }
         } catch (err) {
             console.log(err)
@@ -48,6 +51,7 @@ export default function Login() {
             <div className={"container"}>
                 <div className={"col-4"}></div>
                 <div className="col-5 login-form">
+                    {message !== "" ? message : ""}
                     <form onSubmit={handleSubmit}>
                         <fieldset>
                             <legend className='login-form-title'>Авторизация</legend>
