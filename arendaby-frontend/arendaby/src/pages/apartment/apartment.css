@@ -29,8 +29,9 @@
 }
 
 .ap-img {
-    /*height: 300px;*/
-    /*width: 300px;*/
+    width: 100%;
+    height: auto;
+    object-fit: cover;
 }
 
 .placement {
@@ -310,4 +311,13 @@
 
 .user-comment span {
     font-weight: bold;
+}
+
+.row-params {
+    display: block;
+    margin: 15px 0 15px 0;
+}
+
+.row-params span {
+    margin: 15px 15px 15px 0;
 }

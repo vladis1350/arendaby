@@ -6,17 +6,27 @@ import "./apartment.css";
 import Filter from "../../components/Filter/Filter";
 import ApartmentHeader from "../../components/apartment/ApartmentHeader";
 import ApartmentBody from "../../components/apartment/ApartmentBody";
+import Loader from "../../components/Loader/ClipLoader";
 
 export default function Apartment({isFilter, filteredList}) {
     const [apartment, setApartmentList] = useState([]);
     const {id} = useParams();
+    const [loading, setLoading] = useState(true);
     const [cityName, setCityName] = useState("");
     const [cityUrlImage, setCityUrlImage] = useState("");
     const decl = require('ru-declensions-geo').GeoNamesDeclensions;
+    const [currentPage, setCurrentPage] = useState(1);
+    const [apartPerPage, setApartPerPage] = useState(20);
 
-    const formatDate = (dateString) => {
-        const date = new Date(dateString);
-        return date.toISOString().slice(0, 19);
+    const indexOfLastApartment = currentPage * apartPerPage;
+    const indexOfFirstApartment = indexOfLastApartment - apartPerPage;
+    const currentApartments= apartment.slice(indexOfFirstApartment, indexOfLastApartment)
+    const [refreshKey, setRefreshKey] = useState(0); // Ключ для принудительного обновления
+
+    const handlePageChange = (number) => {
+        setCurrentPage(number);
+        setRefreshKey(refreshKey + 1); // Принудительное обновление
+
     };
 
     const fetchCity = async () => {
@@ -29,7 +39,6 @@ export default function Apartment({isFilter, filteredList}) {
             alert("Ошибка получения данных!");
         }
     }
-
     const fetchApartment = async () => {
         await api.get(`/api/apartment/city/${id}`)
             .then(res => res.data)
@@ -38,25 +47,60 @@ export default function Apartment({isFilter, filteredList}) {
     }
 
     useEffect(() => {
-        fetchCity(id);
-        fetchApartment(id);
-    }, []);
+        try {
+            fetchCity(id);
+            fetchApartment(id);
+        } catch (error) {
+            console.error('Ошибка при загрузке данных:', error);
+        } finally {
+            setLoading(false);
+            // setCurrentApartments(apartment.slice(indexOfFirstApartment, indexOfLastApartment));
+        }
+    }, [currentPage]);
+
+    const pageNumbers = [];
+    for (let i = 1; i <= Math.ceil(apartment.length / apartPerPage); i++) {
+        pageNumbers.push(i);
+    }
 
     return (
         <Fragment>
             <Menu/>
-            <ApartmentHeader city={cityName} apartment={apartment} imgUrl={cityUrlImage}/>
-            <div className="container container-primary">
-                <div className="row apartment-row-title">
-                    <div className="col-lg">
-                        <h4><strong>Найдём, где остановиться в {cityName}: {apartment.length} вариантов</strong></h4>
+            {apartment.length !== 0 ? (
+                <Fragment>
+                    <ApartmentHeader city={cityName} apartment={apartment} imgUrl={cityUrlImage}/>
+                    <div className="container container-primary">
+                        <div className="row apartment-row-title">
+                            <div className="col-lg">
+                                <h4><strong>Найдём, где остановиться в {cityName}: {apartment.length} вариантов</strong>
+                                </h4>
+                            </div>
+                        </div>
+                        <div className="row">
+                            <Filter/>
+                            <ApartmentBody apartmentList={currentApartments} refreshKey={refreshKey}/>
+                            <div className={"pagination-block"}>
+                                <ul className="pagination">
+                                    <li className="page-item disabled">
+                                        <a className="page-link" href="#">&laquo;</a>
+                                    </li>
+                                    {pageNumbers.map(number => (
+                                        <li className="page-item active" key={number}
+                                            onClick={() => handlePageChange(number)}>
+                                            <a className="page-link" href="#">{number}</a>
+                                        </li>
+                                    ))}
+                                    <li className="page-item">
+                                        <a className="page-link" href="#">&raquo;</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
-                </div>
-                <div className="row">
-                    <Filter/>
-                    <ApartmentBody apartmentList={apartment}/>
-                </div>
-            </div>
+                </Fragment>
+            ) : (
+                <Loader loading={loading}/>
+            )}
         </Fragment>
     )
 }

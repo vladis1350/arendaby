@@ -1,6 +1,6 @@
 from django.urls import path, include
 
-from .views import MenuItemList, VocationIdeasList, UpdateMenuItem, IdeasList, TextListView
+from .views import MenuItemList, VocationIdeasList, UpdateMenuItem, IdeasList, TextListView, get_parser_info
 
 urlpatterns = [
     path('menu/', MenuItemList.as_view(), name='menu-list'),
@@ -8,5 +8,6 @@ urlpatterns = [
     path('v-ideas/', VocationIdeasList.as_view(), name='ideas-list'),
     path('v-ideas/idea/<int:v_id>', IdeasList.as_view(), name='ideas'),
     path('parser', TextListView.as_view(), name='ideas'),
-    path('api-auth/', include('rest_framework.urls'))
+    path('api-auth/', include('rest_framework.urls')),
+    path('parse-idea/', get_parser_info, name="get_parser_info")
 ]

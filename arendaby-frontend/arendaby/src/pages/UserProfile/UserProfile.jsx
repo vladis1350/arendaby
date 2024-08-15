@@ -35,6 +35,14 @@ export default function UserProfile() {
         }
     }
 
+    const handleDeleteReservation = (reservationId) => {
+        setBooking((prevReservations) =>
+            prevReservations.filter(reservation => reservation.id !== reservationId)
+        );
+
+        alert('Бронирование успешно удалено.');
+    };
+
     const toggleBlock = () => {
         setIsBookingList(!isBookingList);
     };
@@ -115,7 +123,7 @@ export default function UserProfile() {
                                 <p onClick={toggleBlock} className={"open-close-user-reservation"}>{isBookingList ? 'Скрыть список' : 'Показать список'}</p>
                                 <div className={`user-reservations-block ${isBookingList ? 'open' : 'closed'}`}>
                                     {booking ? (booking.map(item => (
-                                        <UserItemReservation reservation={item}/>
+                                        <UserItemReservation key={item.id} reservation={item} onDelete={handleDeleteReservation}/>
                                     ))) : (
                                         <div><h4>У вас нет не одной брони!</h4></div>
                                     )}

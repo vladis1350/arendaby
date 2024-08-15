@@ -1,16 +1,16 @@
 import React, {Fragment, useEffect, useState} from 'react';
 import Navbar from "../../components/navbar/navbar";
 import {useNavigate, useParams} from "react-router-dom";
-import {api, createComment, getRating} from "../../services/Api";
+import {api, createBooking, createComment, getRating} from "../../services/Api";
 import {useSelector} from "react-redux";
-import {FaCalendar, FaChevronLeft, FaChevronRight} from 'react-icons/fa';
+import {FaCalendar, FaChevronLeft, FaChevronRight, FaStar} from 'react-icons/fa';
 import './apartment.css';
 import Loader from "../../components/Loader/ClipLoader";
 import BookingForm from "../../components/BookingCalendar/BookingForm";
 import PopupComponent from "../../components/PopupComponent/PopupComponent";
 import Rating from "../../components/rating/Rating";
 import {format} from 'date-fns';
-import {ru} from 'date-fns/locale';
+import {ReadMore} from "./ReadMore";
 
 export default function ViewApartmentDetail() {
     const {isLoggedIn, userId} = useSelector((state) => state.auth);
@@ -26,14 +26,21 @@ export default function ViewApartmentDetail() {
     const [children, setChildren] = useState(0);
     const [userComment, setUserComment] = useState("");
     const navigate = useNavigate();
-    const [commentMessage, setCommentMessage] = useState("")
-    const [rating, setRating] = useState(0)
+    const [commentMessage, setCommentMessage] = useState("");
+    const [rating, setRating] = useState(0);
+    const [start_booking, setStartBooking] = useState();
+    const [end_booking, setEndBooking] = useState();
 
     const handleOverlayClick = (e) => {
         if (e.target.classList.contains('overlay')) {
             setShowPopup(false);
         }
     };
+
+    const handleSelectedDates = (start, end) => {
+        setStartBooking(start);
+        setEndBooking(end);
+    }
 
     useEffect(() => {
         // document.title = apartment.name;
@@ -67,7 +74,7 @@ export default function ViewApartmentDetail() {
     }
 
     const formatDate = (date) => {
-        return format(new Date(date), 'dd MMMM HH:mm', {locale: ru});
+        return format(date, 'yyyy-MM-dd');
     };
 
     const fetchApartmentDetail = async () => {
@@ -91,6 +98,26 @@ export default function ViewApartmentDetail() {
             return currentImage - 1;
         });
     }
+
+    const declineGuest = (count) => {
+        if (count % 10 === 1 && count % 100 !== 11) {
+            return 'гость';
+        } else if (count % 10 >= 2 && count % 10 <= 4 && (count % 100 < 10 || count % 100 >= 20)) {
+            return 'гостя';
+        } else {
+            return 'гостей';
+        }
+    };
+
+    const declineComment = (count) => {
+        if (count % 10 === 1 && count % 100 !== 11) {
+            return 'отзыв';
+        } else if (count % 10 >= 2 && count % 10 <= 4 && (count % 100 < 10 || count % 100 >= 20)) {
+            return 'отзыва';
+        } else {
+            return 'отзывов';
+        }
+    };
 
     const handleRightArrowClick = () => {
         setCurrentImage((currentImage) => {
@@ -134,6 +161,27 @@ export default function ViewApartmentDetail() {
                 fetchApartmentDetail();
             } else {
                 setCommentMessage("Комментарий не был добавлен!");
+            }
+        } else {
+            navigate("/login");
+        }
+    }
+
+    const toBooking = async () => {
+        alert(start_booking)
+        alert(end_booking)
+        if (isLoggedIn) {
+            const formDataToSend = new FormData();
+            formDataToSend.append('client', userId);
+            formDataToSend.append('apartment', apart_id);
+            formDataToSend.append('start_booking', formatDate(start_booking));
+            formDataToSend.append('end_booking', formatDate(end_booking));
+            formDataToSend.append('isBooking', false);
+            const response = await createBooking(formDataToSend);
+            if (response.status === 201) {
+                alert("Бронь создана!");
+            } else {
+                alert("Что то пошло не так!");
             }
         } else {
             navigate("/login");
@@ -189,20 +237,22 @@ export default function ViewApartmentDetail() {
                                         )))}
                                 </div>
                                 <div className={"container"}>
-                                    <div className={"row"}>
-                                        <div className={"col-2"}><span>Этаж : {apartment.number_floor}</span></div>
-                                        <div className={"col-2"}>
-                                            <span>Лифт : {apartment.elevator ? " Есть" : " Нет"}</span></div>
-                                        <div className={"col-2"}><span>Площадь : {apartment.square}</span></div>
-                                        <div className={"col-2"}><span>Комнат : {apartment.count_room}</span></div>
+                                    <div className={"row row-params"}>
+                                        <span>{apartment.sleeping_places} {declineGuest(apartment.sleeping_places)}</span>
+                                        <span>Этаж: {apartment.number_floor} из {apartment.count_floor}</span>
+                                        <span>Лифт: {apartment.elevator ? " Есть" : " Нет"}</span>
+                                        <span>Площадь: {apartment.square} м<sup>2</sup></span>
+                                        {/*<div className={"col-2"}><span>Комнат : {apartment.count_room}</span></div>*/}
                                     </div>
                                     <div className={"row"}>
                                         <div className={"col"}>
-                                            <p>Спальных мест: {apartment.sleeping_places}</p>
-                                            <p>Описание:</p>
-                                            <p>{apartment.descriptions}</p>
+                                            <h5><strong>Спальных мест: {apartment.sleeping_places}</strong></h5>
+                                            <div>
+                                                <ReadMore text={apartment.descriptions} maxLength={500}/>
+                                            </div>
                                         </div>
                                     </div>
+                                    <hr/>
                                 </div>
                             </div>
                         </div>
@@ -210,8 +260,8 @@ export default function ViewApartmentDetail() {
                             <div className={"right-head-block"}>
                                 <div className={"row"}>
                                     <div className={"col booking-calendar"}>
-                                        <BookingForm apart_id={apart_id} user_id={userId}/>
-                                        {/*<BookingCalendar getPeriod={handleDateSelection} apart_id={apart_id}/>*/}
+                                        <BookingForm apart_id={apart_id} user_id={userId}
+                                                     selectedDates={handleSelectedDates}/>
                                     </div>
                                 </div>
                                 <div className={"row row-guests"}>
@@ -227,13 +277,13 @@ export default function ViewApartmentDetail() {
                                                                        count_guest={apartment.sleeping_places}/>)}
                                     </div>
                                 </div>
-                                {/*<div className={"row row-booking"}>*/}
-                                {/*    <div className={"col"}>*/}
-                                {/*        <button type="button" onClick={toBooking}*/}
-                                {/*                className="btn btn-success btn-booking">Забронировать*/}
-                                {/*        </button>*/}
-                                {/*    </div>*/}
-                                {/*</div>*/}
+                                <div className={"row row-booking"}>
+                                    <div className={"col"}>
+                                        <button type="button" onClick={toBooking}
+                                                className="btn btn-success btn-booking">Забронировать
+                                        </button>
+                                    </div>
+                                </div>
                                 <div className={"row row-landlord"}>
                                     <div className={"col"}>
                                         <h4>Арендодатель:</h4>
@@ -256,13 +306,16 @@ export default function ViewApartmentDetail() {
                         <div className={"col-8 comment-block"}>
                             <div className={"row"}>
                                 <div className={"col"}>
-                                    <h4>Рейтинг {apartment.rating.length === 0 ? 0 : apartment.rating.reduce((acc, rating) => acc + rating.rating, 0)}
-                                    </h4>
+                                    <div className={"rating-comment"}>
+                                        <h4><strong>Оценка гостей &nbsp;&nbsp;&nbsp;<FaStar
+                                            style={{color: "#FFD700"}}/> {apartment.rating.length === 0 ? 0 : apartment.rating.reduce((acc, rating) => acc + rating.rating, 0)}
+                                        </strong></h4>
+                                        <span>{apartment.comment.length} {declineComment(apartment.comment.length)}</span>
+                                    </div>
                                     <Rating apartmentId={apart_id} userRating={rating}/>
                                     <hr/>
                                     <h4>ОТЗЫВЫ</h4>
-                                    <hr/>
-                                    <label>Ваш отзыв: </label><br/>
+                                    <label>{apartment.comment.length !== 0 ? "Напишите свой отзыв:" : "Напиши свой отзыв. Будь первым!"} </label><br/>
                                     <textarea rows="5" cols="70" value={userComment} onChange={handleCommentField}/>
                                     <br/>
                                     <button type="button" onClick={saveComment}>Отправить</button>

@@ -2,7 +2,7 @@ import pytz
 from country.models import City
 from django.db.models import Q
 from rest_framework import generics, status
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from user.models import User
 
@@ -306,7 +306,6 @@ class CommentViewSet(generics.ListCreateAPIView):
         return Response(serializer.data, status.HTTP_200_OK)
 
     def post(self, request, *args, **kwargs):
-        print("TYT")
         serializer = CreateCommentSerializer(data=request.data)
         if serializer.is_valid():
             comment = serializer.save()
@@ -321,10 +320,25 @@ class CreateCommentViewSet(generics.ListCreateAPIView):
     permission_classes = (AllowAny,)
 
     def post(self, request, *args, **kwargs):
-        print("TYT")
         serializer = CreateCommentSerializer(data=request.data)
         if serializer.is_valid():
             comment = serializer.save()
             return Response(status=status.HTTP_201_CREATED)
         print(serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class DeleteBookingApartmentView(generics.DestroyAPIView):
+    queryset = Booking.objects.all()
+    serializer_class = BookingSerializer
+    permission_classes = (AllowAny, )
+
+    def get(self, request, *args, **kwargs):
+        booking_id = self.kwargs.get('booking_id')
+        if not booking_id:
+            return Response({"error": "Booking is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        booking = Booking.objects.get(pk=booking_id)
+        booking.delete()
+
+        return Response({'message': 'Booking cancelled successfully.'}, status=204)

@@ -4,8 +4,8 @@ from user.models import User
 
 
 class GroupApartmentType(models.Model):
-    group_name = models.CharField(max_length=50)
-    short_info = models.CharField(max_length=70, default=" ")
+    group_name = models.CharField(max_length=100)
+    short_info = models.CharField(max_length=100, default=" ")
     descriptions = models.TextField(null=True, blank=True, verbose_name='Описание группы')
 
     class Meta:
@@ -41,9 +41,10 @@ class Apartment(models.Model):
 
     # общие сведения
     square = models.CharField(default=1, max_length=15, verbose_name="Площадь апартаментов")
+
     sleeping_places = models.IntegerField(default=1, verbose_name="Спальных мест")
-    number_floor = models.IntegerField(default=1, verbose_name="Этаж")
-    count_floor = models.IntegerField(default=1, verbose_name="Количество этажей")
+    number_floor = models.IntegerField(default=1, verbose_name="Этаж", null=True)
+    count_floor = models.IntegerField(default=1, verbose_name="Количество этажей", null=True)
     elevator = models.BooleanField(default=False, verbose_name="Наличие лифта")
     count_room = models.IntegerField(default=1, verbose_name="Количество комнат")
     price = models.IntegerField(default=1, verbose_name="Цена за сутки")
@@ -86,6 +87,7 @@ class Booking(models.Model):
     start_booking = models.DateField(verbose_name="Бронь с")
     end_booking = models.DateField(verbose_name="Бронь по")
     isBooking = models.BooleanField(default=False)
+    created_at = models.DateField(auto_now_add=True, verbose_name='Забронировано')
 
     @property
     def total_price(self):
