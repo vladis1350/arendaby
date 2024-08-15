@@ -15,6 +15,9 @@ if (token) {
 export const getUser = async (id) =>
     api.get(`/api/user/${id}`);
 
+export const deleteBooking = async (id) =>
+    api.get(`/api/apartment/booking/delete/${id}`);
+
 export const authUser = async (username, email, password) =>
     api.post("/api/user/register/", {username, email, password});
 

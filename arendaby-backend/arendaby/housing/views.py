@@ -1,10 +1,12 @@
 from rest_framework import generics, status
+from rest_framework.decorators import api_view
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .service import create_apartment
+
 from .models import MenuItem, VocationIdeas, Idea
-from .parserIdeas import parse_webpage, get_country_list
+from .parser_apartment import parse_webpage
+from .parser_ideas import get_
 from .serializers import MenuItemSerializer, VocationIdeasSerializer, IdeaSerializer, IdeaTextSerializer
 
 
@@ -49,16 +51,23 @@ class IdeasList(generics.ListAPIView):
 class TextListView(APIView):
 
     def get(self, request):
-        url = 'https://sutochno.ru'
-        # url = 'https://spb.sutochno.ru/?from=mainpage'
-        # country_list = ['azerbaijan', 'belarus', 'kazakhstan', 'georgia', 'armenia', ]
-        link_list = get_country_list("https://sutochno.ru/")
-        for link in link_list:
-            if link.startswith('//'):
-                parse_data = parse_webpage("https:"+link)
-            else:
-                parse_data = parse_webpage(url + link)
-            create_apartment(parse_data)
+        parse_webpage()
         serialized_text = IdeaTextSerializer(data={"long_text": "parse_data"})
         if serialized_text.is_valid():
             return Response(serialized_text.data)
+
+
+@api_view(['GET'])
+def get_parser_info(request):
+    result = get_("https://sutochno.ru/info/gde-nedorogo-otdohnut-na-more-letom?from=mainpage")
+    tag_list = []
+    if len(result[1]) > 0:
+        for item in result[1]:
+            tag_list.append(item)
+
+    res = {
+        'titles': [item for item in result[0]],
+        'text': [item.text for item in tag_list]
+    }
+
+    return Response(res)

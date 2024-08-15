@@ -14,7 +14,9 @@ class ApartmentAdmin(admin.ModelAdmin):
     list_display = ("id",
                     "name", "type", "city", "street_name", "number_house", "number_block", "square", "number_floor",
                     "count_floor",
-                    "sleeping_places", "elevator", "count_room", "price", "descriptions",)
+                    "sleeping_places", "elevator", "count_room", "price",)
+    list_filter = ('id', 'name',)
+    search_fields = ('name', 'description')
     ordering = ["type", "city", "name", "square", "number_floor", "count_floor", "elevator", "count_room", "price",
                 "sleeping_places", ]
 
@@ -33,7 +35,7 @@ class GroupApartmentTypeAdmin(admin.ModelAdmin):
 
 @admin.register(Booking)
 class BookingAdmin(admin.ModelAdmin):
-    list_display = ('apartment', 'start_booking', 'end_booking', 'total_price', 'client',)
+    list_display = ('id', 'apartment', 'start_booking', 'end_booking', 'total_price', 'client',)
     ordering = ['apartment', 'start_booking', ]
 
 

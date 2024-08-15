@@ -29,3 +29,8 @@ class RegionSerializer(serializers.ModelSerializer):
 
 class IdeaTextSerializer(serializers.Serializer):
     long_text = serializers.CharField(style={'base_template': 'textarea.html'})
+
+
+class ParsedDataSerializer(serializers.Serializer):
+    link_list = serializers.ListField()
+    text_list = serializers.ListField()

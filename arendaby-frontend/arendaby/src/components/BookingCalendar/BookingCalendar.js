@@ -21,8 +21,6 @@ const BookingCalendar = ({getPeriod}) => {
 
     const handleSelectDate = dates => {
         const [start, end] = dates;
-        // const startFormat = format(start,  'd MMMM, EE', { locale: ruLocale })
-        // const endFormat = format(end,  'd MMMM, EE', { locale: ruLocale })
         setStartDate(start);
         setEndDate(end);
         onSelectDates(start, end);

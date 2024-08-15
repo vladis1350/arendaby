@@ -1,7 +1,8 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {useSelector} from "react-redux";
 import {createRating, getRating} from '../../services/Api';
 import {useNavigate} from "react-router-dom";
+import "./rating.css";
 
 const Rating = ({apartmentId, userRating}) => {
     const {isLoggedIn, userId} = useSelector((state) => state.auth);
@@ -30,7 +31,7 @@ const Rating = ({apartmentId, userRating}) => {
 
     return (
         <div className={"rating-block"}>
-            <h3>Оцените апартамент:</h3>
+            <h4><strong>Оцените апартамент:</strong></h4>
             {[1, 2, 3, 4, 5].map((star) => (
                 <span
                     key={star}
@@ -44,7 +45,9 @@ const Rating = ({apartmentId, userRating}) => {
                     ★
                 </span>
             ))}
-            <p>Вы оценили: {userRating} {userRating === 1 ? 'звезда' : 'звезд'}</p>
+            {userRating === 0 || userRating === null ? <p>Вы еще не поставили свою оценку</p> :
+                <p>Вы оценили: {userRating} {userRating === 1 ? 'звезда' : 'звезд'}</p>}
+
         </div>
     );
 };
