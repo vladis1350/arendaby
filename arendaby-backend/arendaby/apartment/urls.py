@@ -4,11 +4,14 @@ from .views import (ApartmentViewList, ApartmentByCityViewList, ApartmentByTypeV
                     ApartmentPhotoByApartmentViewList, SearchingApartmentsList, GroupApartmentTypeList,
                     ApartmentTypeByGroupIdViewList, RentApartmentView, ApartmentByIdView, BookingApartmentView,
                     ApartmentFilterView, BookingUserApartmentView, CheckBookingApartmentView, RatingViewSet,
-                    CommentViewSet, CreateCommentViewSet, CreateRatingViewSet, DeleteBookingApartmentView)
+                    CommentViewSet, CreateCommentViewSet, CreateRatingViewSet, DeleteBookingApartmentView,
+                    UserActivityViewSet, CreateUserActivityViewSet, UserActivityByApartViewSet,
+                    UpdateUserActivityViewSet, filter_apartments, ApartmentAllListViewList)
 
 urlpatterns = [
     path('apartment/city/get_photo/<int:pk>', ApartmentPhotoByApartmentViewList.as_view(), name='apartment_photos'),
     path('apartment/city/<int:city_id>', ApartmentByCityViewList.as_view(), name='apartment_by_city_list'),
+    path('apartment/cities/', ApartmentAllListViewList.as_view(), name='apartment_all_list'),
     path('apartment/type/<str:type>', ApartmentByTypeViewList.as_view(), name='apartment_by_type_list'),
     path('apartment/types/<int:group_id>', ApartmentTypeByGroupIdViewList.as_view(),
          name='apartment_type_by_group_list'),
@@ -16,6 +19,7 @@ urlpatterns = [
     path('apartment/list', ApartmentViewList.as_view(), name='county list'),
     path('apartment/search/', SearchingApartmentsList.as_view(), name='searching-city'),
     path('apartment/groups/', GroupApartmentTypeList.as_view(), name='group_type_apartment'),
+    path('apartment/filter-by-param/', filter_apartments, name='filter_apartment_by_param'),
     path('apartment/create/', RentApartmentView.as_view(), name='create_apartment'),
     path('apartment/<int:apart_id>', ApartmentByIdView.as_view(), name='get_apartment'),
     path('apartment/booking/create/', BookingApartmentView.as_view(), name='booking_apartment'),
@@ -29,5 +33,9 @@ urlpatterns = [
     path('apartment/comments/', CommentViewSet.as_view(), name='comment_apartment_list'),
     path('apartment/comment/<int:apart_id>', CommentViewSet.as_view(), name='comment_apartment'),
     path('apartment/comment/create/', CreateCommentViewSet.as_view(), name='create_comment_apartment'),
+    path('user-activities/<int:user_id>', UserActivityViewSet.as_view(), name='user-activities'),
+    path('user-activity/<int:user_id>/<int:apart_id>', UserActivityByApartViewSet.as_view(), name='user-activity'),
+    path('user-activities/create/', CreateUserActivityViewSet.as_view(), name='create-user-activities'),
+    path('user-activities/update/<int:id>', UpdateUserActivityViewSet.as_view(), name='update-user-activities'),
     # path('apartment/search/?term=<str:apartment>', ApartmentSearchingViewList.as_view(), name='county list'),
 ]

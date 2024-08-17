@@ -11,36 +11,27 @@ import "./Login.css"
 export default function Login() {
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
+    const [token, setToken] = useState('');
     const [loading, setLoading] = useState(false)
     const {isLoggedIn} = useSelector((state) => state.auth);
     const navigate = useNavigate()
     const dispatch = useDispatch();
     const [message, setMessage] = useState("");
 
-    const handleSubmit = async (e) => {
-        setLoading(true);
+    const handleLogin = async (e) => {
         e.preventDefault();
-
         try {
-            const res = await loginUser(username, password);
-            if (res.status === 200) {
-                dispatch(
-                    login({
-                        accessToken: res.data.access,
-                        refreshToken: res.data.refresh,
-                    })
-                )
-            } else {
-                 setMessage("Неверный логин или пароль!")
-            }
-        } catch (err) {
-            console.log(err)
-        } finally {
-            setLoading(false)
+            const response = await loginUser(username, password);
+            setToken(response.data.access);
+            localStorage.setItem('token', response.data.access); // Сохранение токена в localStorage
+        } catch (error) {
+            setMessage("Неверный логин или пароль!")
+            console.error('Ошибка входа:', error);
         }
     };
 
-    if (isLoggedIn) {
+
+    if (token) {
         dispatch(showMessageInfo({type: "success", text: `Добро пожаловать ${username}`}));
         return <Navigate to="/"/>;
     }
@@ -52,7 +43,7 @@ export default function Login() {
                 <div className={"col-4"}></div>
                 <div className="col-5 login-form">
                     {message !== "" ? message : ""}
-                    <form onSubmit={handleSubmit}>
+                    <form onSubmit={handleLogin}>
                         <fieldset>
                             <legend className='login-form-title'>Авторизация</legend>
                             <div>

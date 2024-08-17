@@ -34,6 +34,10 @@
     object-fit: cover;
 }
 
+h3 {
+    margin-left: 0;
+}
+
 .placement {
     margin-bottom: 10px;
     padding-bottom: 10px;
@@ -166,8 +170,18 @@
     user-select: none;
 }
 
+.favorite-block {
+    text-align: right;
+    padding-right: 40px;
+    position: relative;
+    top: -35px;
+}
+
 .main-image-block {
     display: flex;
+    height: 600px;
+    position: relative;
+    top: -30px;
     margin: 0;
     padding: 0;
     justify-content: center;
@@ -219,8 +233,8 @@
 }
 
 .main-image {
-    width: 670px;
-    height: 445px;
+    width: 800px;
+    height: 100%;
     left: -20px;
     background-color: rgba(0, 0, 0, 0.1);
     display: flex;
@@ -260,11 +274,16 @@
 
 .apart-view-right-block {
     padding-top: 50px;
-    align-items: center;
 }
 
 .right-head-block {
-    background-color: #d9edf7;
+    background-color: #F5F5F5;
+}
+
+.favorite {
+    text-align: right;
+    cursor: pointer;
+    font-size: 17px;
 }
 
 .row-booking {
@@ -279,7 +298,7 @@
 }
 
 .row-guests {
-    padding-left: 10px;
+    padding-left: 40px;
     padding-top: 20px;
 }
 

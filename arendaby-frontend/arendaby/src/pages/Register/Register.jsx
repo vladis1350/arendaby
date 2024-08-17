@@ -24,7 +24,11 @@ export default function Register() {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
         username: "",
+        secondname: "",
+        firstname: "",
+        photo: null,
         email: "",
+        phone: "",
         password: "",
         password2: "",
     });
@@ -49,7 +53,7 @@ export default function Register() {
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        const {username, email, password, password2} = formData;
+        const {password, password2} = formData;
 
         if (!CheckPassword(password, password2)) {
             dispath(
@@ -61,9 +65,15 @@ export default function Register() {
             return;
         }
         try {
-            const response = await authUser(username, email, password);
-            dispath(login(response.data.access, response.data.refresh));
-            navigate("/login");
+            const formDataToSend = new FormData();
+            Object.entries(formData).forEach(([key, value]) => {
+                formDataToSend.append(key, value);
+            });
+            const response = await authUser(formDataToSend);
+            if (response.status === 201) {
+                dispath(login(response.data.access, response.data.refresh));
+                navigate("/login");
+            }
         } catch (error) {
             if (error.response && error.response.status === 401) {
                 console.log(error);
@@ -73,6 +83,14 @@ export default function Register() {
                 console.log(error);
             }
         }
+    };
+
+    const handleFileChange = (e) => {
+        const {name, value, type, files} = e.target;
+        setFormData({
+            ...formData,
+            [name]: type === 'file' ? files[0] : value,
+        });
     };
 
     return (
@@ -85,13 +103,37 @@ export default function Register() {
                     </div>
                     <form className="form" onSubmit={handleSubmit}>
                         <div className="row">
-                            <label className="form-label mt-2">Имя пользователя:</label>
+                            <label className="form-label mt-2">Имя пользователя(login):</label>
                             <div className="col-sm-7">
                                 <input className="form-control"
                                        type="text"
                                        id="username"
                                        name="username"
                                        value={formData.username}
+                                       onChange={handleChange}
+                                       required
+                                />
+                            </div>
+                        </div>
+                        <div className="row">
+                            <div className="col-sm-4">
+                                <label className="form-label mt-2">Фамилия:</label>
+                                <input className="form-control"
+                                       type="text"
+                                       id="secondname"
+                                       name="secondname"
+                                       value={formData.secondname}
+                                       onChange={handleChange}
+                                       required
+                                />
+                            </div>
+                            <div className="col-sm-4">
+                                <label className="form-label mt-2">Имя:</label>
+                                <input className="form-control"
+                                       type="text"
+                                       id="firstname"
+                                       name="firstname"
+                                       value={formData.firstname}
                                        onChange={handleChange}
                                        required
                                 />
@@ -105,6 +147,19 @@ export default function Register() {
                                        id="email"
                                        name="email"
                                        value={formData.email}
+                                       onChange={handleChange}
+                                       required
+                                />
+                            </div>
+                        </div>
+                        <div className="row">
+                            <label className="form-label mt-2">Номер телефона:</label>
+                            <div className="col-sm-7">
+                                <input className="form-control"
+                                       type="text"
+                                       id="phone"
+                                       name="phone"
+                                       value={formData.phone}
                                        onChange={handleChange}
                                        required
                                 />
@@ -133,6 +188,17 @@ export default function Register() {
                                        value={formData.password2}
                                        onChange={handleChange}
                                        required
+                                />
+                            </div>
+                        </div>
+                        <div className={"row"}>
+                            <div className={"col-sm-7"}>
+                                <h3>Загрузите своё фото</h3>
+                                <input
+                                    type="file"
+                                    name="photo"
+                                    onChange={handleFileChange}
+                                    required
                                 />
                             </div>
                         </div>

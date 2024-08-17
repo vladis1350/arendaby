@@ -1,21 +1,23 @@
 import React, {useEffect, useState} from "react";
 import "../../styles/bootstrap.min.css";
 import {api, getUser} from "../../services/Api";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import Loader from "../Loader/ClipLoader";
 import ProfileUserImage from "../navbar/ProfileImage";
+import {logout} from "../../Redux/authReducer";
 
 function Menu() {
     const [menuItems, setMenuItems] = useState([]);
     const [user, setUser] = useState();
     const [loading, setLoading] = useState(true);
-    const {isLoggedIn, userId} = useSelector(
+    const {isLoggedIn, userId, token} = useSelector(
         (state) => state.auth);
+    const dispatch = useDispatch();
 
     useEffect(() => {
         try {
             setLoading(true);
-            if (isLoggedIn) {
+            if (token) {
                 getUserById();
             }
             getMenu();
@@ -24,7 +26,7 @@ function Menu() {
         } finally {
             setLoading(false);
         }
-    }, [isLoggedIn]);
+    }, [isLoggedIn, token]);
 
     const getMenu = () => {
         api
@@ -34,17 +36,28 @@ function Menu() {
                 setMenuItems(data);
                 console.log(data);
             })
-            .catch((err) => alert(err))
+            .catch((err) => console.log(err))
     }
 
     const getUserById = async () => {
-        const response = await getUser(userId);
-        if (response.status === 200) {
-            setUser(response.data);
-        } else {
-            alert("Error Authorization");
+        try {
+            const response = await getUser(userId);
+            if (response.status === 200) {
+                setUser(response.data);
+            } else {
+                console.log("Error Authorization");
+            }
+        } catch (error) {
+            console.log(error);
         }
     }
+
+    const handleLogout = () => {
+        localStorage.removeItem('token'); // Удаляем токен из localStorage
+        dispatch(logout())
+        // Здесь можно выполнить любой дополнительный код для выхода, например, перенаправление на главную страницу
+        console.log('Пользователь вышел');
+    };
 
     return (
         <nav className="navbar navbar-expand-lg bg-dark" data-bs-theme="dark">
@@ -58,18 +71,18 @@ function Menu() {
                 <div className="collapse navbar-collapse" id="navbarColor02">
                     <ul className="navbar-nav me-auto">
                         {menuItems.map(item => (
-                            isLoggedIn && item.name === "Войти" ?
+                            token && item.name === "Войти" ?
                                 (<>
                                     <li className="nav-item">
-                                        <a className="nav-link" href={"/logout"}>Выйти</a>
+                                        <a className="nav-link" onClick={handleLogout} href={"#"}>Выйти</a>
                                     </li>
                                     {user ?
                                         (<li className="nav-item">
-                                            <a className="nav-link profile-link"
-                                               href={"/profile"}>
-                                                {user.profile.firstname} {user.profile.secondname}
-                                                <ProfileUserImage/></a>
-                                        </li>
+                                                <a className="nav-link profile-link"
+                                                   href={"/profile"}>
+                                                    {user.profile.firstname} {user.profile.secondname}
+                                                    <ProfileUserImage/></a>
+                                            </li>
 
                                         ) : (<Loader loading={loading}/>)
                                     }

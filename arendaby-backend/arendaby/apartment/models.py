@@ -124,3 +124,17 @@ class Comment(models.Model):
 
     def __str__(self):
         return f'Review for {self.apartment.name} - Comment: {self.comment}'
+
+
+class UserActivity(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="userActivity_set")
+    apartment = models.ForeignKey(Apartment, on_delete=models.CASCADE, related_name="activity_set")
+    is_favorite = models.BooleanField(default=False)
+    viewed_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Просмотренный"
+        verbose_name_plural = "Просмотренные"
+
+    def __str__(self):
+        return self.apartment.name

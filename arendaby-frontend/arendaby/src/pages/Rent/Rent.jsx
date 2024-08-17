@@ -5,6 +5,7 @@ import {api, createApartment, getApartmentTypes, getGroupApartmentType} from "..
 import {useDispatch, useSelector} from "react-redux";
 import {NotAuth} from "../../components/Auth/NotAuth";
 import {showMessageInfo} from "../../Redux/messagesReducer";
+import {useNavigate} from "react-router-dom";
 
 
 export default function Rent() {
@@ -23,6 +24,7 @@ export default function Rent() {
     const [progress, setProgress] = useState(20);
     const [countRoom, setCountRoom] = useState(1);
     const [countSleepingPlaces, setSleepingPlaces] = useState(1);
+    const navigate = useNavigate();
     const [apartData, setApartData] = React.useState({
         type: "",
         city: "",
@@ -90,9 +92,8 @@ export default function Rent() {
         });
         const response = await createApartment(formDataToSend);
         if (response.status === 201) {
-            dispatch(
-                showMessageInfo({type: "success", text: "Объявление создано"})
-            );
+            alert("Объявление создано!");
+            navigate("/")
             handleReset();
         } else {
             dispatch(

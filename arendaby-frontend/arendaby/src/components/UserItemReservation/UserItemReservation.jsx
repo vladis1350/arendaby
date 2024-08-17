@@ -46,7 +46,7 @@ const UserItemReservation = ({reservation, onDelete}) => {
                     <span className="card-subtitle text-muted">{reservation.start_booking} - </span>
                     <span className="card-subtitle text-muted">{reservation.end_booking}</span>
                 </div>
-                <Carousel PAGE_WIDTH={500} widthPage={"100%"} heightPage={"350px"}>
+                <Carousel PAGE_WIDTH={600} widthPage={"100%"} heightPage={"350px"}>
                     {reservation.apartment.images && reservation.apartment.images.length > 0 && (
                         reservation.apartment.images.map((image, index) => (
                                 <img key={index} src={image.image} alt={`Image ${index}`}

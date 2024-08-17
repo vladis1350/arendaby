@@ -36,7 +36,9 @@ def parse_webpage():
     params = []
     driver = webdriver.Firefox()
     links = {
-        "Москва": 'https://sutochno.ru/front/searchapp/search?guests_adults=1&term=%D0%9C%D0%BE%D1%81%D0%BA%D0%B2%D0%B0&price_per=1&id=1&SW.lat=54.60150568740563&SW.lng=36.37361645232882&NE.lat=56.558284061762066&NE.lng=38.48299145232881&occupied=2024-09-02;2024-09-03&sortings=rating.desc',
+        # "Москва": 'https://sutochno.ru/front/searchapp/search?guests_adults=1&term=%D0%9C%D0%BE%D1%81%D0%BA%D0%B2%D0%B0&price_per=1&id=1&SW.lat=54.60150568740563&SW.lng=36.37361645232882&NE.lat=56.558284061762066&NE.lng=38.48299145232881&occupied=2024-09-02;2024-09-03&sortings=rating.desc',
+        "Санкт-Петербург": 'https://sutochno.ru/front/searchapp/search?id=397367&term=%D0%A1%D0%B0%D0%BD%D0%BA%D1%82-%D0%9F%D0%B5%D1%82%D0%B5%D1%80%D0%B1%D1%83%D1%80%D0%B3&guests_adults=1&occupied=2024-08-31;2024-09-01&price_per=1&SW.lat=59.700402177912075&SW.lng=30.041236625000003&NE.lat=60.13410804459852&NE.lng=30.568580375000007&type=city',
+        "Минск": 'https://sutochno.ru/front/searchapp/search?id=398612&term=%D0%9C%D0%B8%D0%BD%D1%81%D0%BA&guests_adults=1&occupied=2024-08-31;2024-09-01&price_per=1&SW.lat=53.76482957610492&SW.lng=27.428125558593123&NE.lat=54.01994455806141&NE.lng=27.691797433593102&type=city',
     }
 
     for city_name, link in links.items():
@@ -45,7 +47,7 @@ def parse_webpage():
 
         current_page = 1
 
-        while all_cards_view != 3000:
+        while all_cards_view != 500:
             page_height = driver.execute_script("return document.body.scrollHeight")
             curr_pos = 0
             while curr_pos < page_height:
@@ -131,7 +133,7 @@ def parse_webpage():
                 image_list.clear()
                 params.clear()
                 cards_on_page += 1
-                if all_cards_view >= 3000:
+                if all_cards_view >= 500:
                     break
                 else:
                     all_cards_view += 1

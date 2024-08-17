@@ -31,10 +31,18 @@ const authSlice = createSlice({
                 console.log(error);
             }
         },
+        logout: (state) => {
+            state.isLoggedIn = false;
+            state.token = null;
+            state.refreshToken = null;
+            state.userId = "";
+            localStorage.removeItem("token");
+            localStorage.removeItem("refreshToken");
+        },
     }
 });
 
-export const { login, logout, verifyUser } =
-  authSlice.actions;
+export const {login, logout, verifyUser} =
+    authSlice.actions;
 
 export default authSlice.reducer;

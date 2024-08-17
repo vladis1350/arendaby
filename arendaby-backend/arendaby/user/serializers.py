@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+
 from .models import UserProfile
 
 
@@ -28,6 +29,10 @@ class UserSerializer(serializers.ModelSerializer):
 
 class UserRegisterSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=20)
+    firstname = serializers.CharField(max_length=20)
+    secondname = serializers.CharField(max_length=20)
+    phone = serializers.CharField(max_length=20)
+    image = serializers.ImageField()
     email = serializers.EmailField()
     password = serializers.CharField(write_only=True)
 
