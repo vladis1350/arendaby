@@ -6,7 +6,6 @@ import {FaRubleSign, FaStar} from 'react-icons/fa';
 const ApartmentBody = ({apartmentList, refreshKey}) => {
 
     useEffect(() => {
-
     }, [apartmentList]);
 
     return (

@@ -1,12 +1,18 @@
 from django.contrib import admin
 
-from .models import ApartmentType, Apartment, ApartmentPhoto, GroupApartmentType, Booking, Rating, Comment
+from .models import ApartmentType, Apartment, ApartmentPhoto, GroupApartmentType, Booking, Rating, Comment, UserActivity
 
 
 @admin.register(ApartmentType)
 class ApartmentTypeAdmin(admin.ModelAdmin):
     list_display = ("type_name", "group")
     ordering = ["type_name", "group"]
+
+
+@admin.register(UserActivity)
+class UserActivity(admin.ModelAdmin):
+    list_display = ("user", "apartment", "is_favorite", "viewed_at")
+    ordering = ["is_favorite"]
 
 
 @admin.register(Apartment)

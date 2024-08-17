@@ -2,9 +2,9 @@ from country.models import City
 from country.serializers import CitySerializer
 from rest_framework import serializers
 from user.models import User
-from user.serializers import UserSerializer, UserProfileSerializer
+from user.serializers import UserSerializer
 
-from .models import ApartmentType, Apartment, ApartmentPhoto, GroupApartmentType, Booking, Rating, Comment
+from .models import ApartmentType, Apartment, ApartmentPhoto, GroupApartmentType, Booking, Rating, Comment, UserActivity
 
 
 class ApartmentTypeSerializer(serializers.ModelSerializer):
@@ -60,9 +60,17 @@ class ApartmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Apartment
         fields = (
-            'id', 'type', 'city', 'rating', 'comment', 'landlord', 'images', 'name', 'street_name', 'number_house', 'number_block',
+            'id', 'type', 'city', 'rating', 'comment', 'landlord', 'images', 'name', 'street_name', 'number_house',
+            'number_block',
             'square', 'number_floor', 'count_floor', 'sleeping_places', 'elevator', 'count_room', 'price',
             'descriptions', 'booking',)
+
+
+class ApartmentFilterSerializer(serializers.Serializer):
+    price_min = serializers.DecimalField(max_digits=10, decimal_places=2, required=False)
+    price_max = serializers.DecimalField(max_digits=10, decimal_places=2, required=False)
+    group_ids = serializers.ListField(child=serializers.IntegerField(), required=False)
+    city_id = serializers.IntegerField(required=False)
 
 
 class ApartmentCreateSerializer(serializers.ModelSerializer):
@@ -174,3 +182,41 @@ class CreateCommentSerializer(serializers.ModelSerializer):
         comment = Comment.objects.create(client=client, apartment=apartment, **validated_data)
 
         return comment
+
+
+class UserActivitySerializer(serializers.ModelSerializer):
+    user = UserSerializer(required=False)
+    apartment = ApartmentSerializer(required=False)
+
+    class Meta:
+        model = UserActivity
+        fields = ['id', 'user', 'apartment', 'is_favorite', 'viewed_at']
+
+
+class CreateUserActivitySerializer(serializers.ModelSerializer):
+    user = serializers.CharField(source='user.id')
+    apartment = serializers.CharField(source='apartment.id')
+
+    class Meta:
+        model = UserActivity
+        fields = ['id', 'user', 'apartment', 'is_favorite', 'viewed_at']
+
+    def create(self, validated_data):
+        apart_id = validated_data.pop('apartment')['id']
+        client_id = validated_data.pop('user')['id']
+
+        user = User.objects.get(pk=client_id)
+        apartment = Apartment.objects.get(pk=apart_id)
+        user_activity = UserActivity.objects.create(user=user, apartment=apartment, **validated_data)
+
+        return user_activity
+
+    def update(self, instance, validated_data):
+        apart_id = validated_data.pop('apartment')['id']
+        client_id = validated_data.pop('user')['id']
+
+        user = User.objects.get(pk=client_id)
+        apartment = Apartment.objects.get(pk=apart_id)
+        user_activity = UserActivity.objects.update(user=user, apartment=apartment, **validated_data)
+
+        return user_activity

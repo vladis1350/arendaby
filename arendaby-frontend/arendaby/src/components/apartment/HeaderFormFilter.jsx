@@ -4,6 +4,7 @@ import BookingCalendar from "../BookingCalendar/BookingCalendar";
 import {FaSearch} from 'react-icons/fa';
 import {useNavigate} from 'react-router-dom';
 import SelectGuestsComponent from "../PopupComponent/SelectGuestsComponent";
+import {format} from 'date-fns';
 
 export default function HeaderFormFilter() {
     const [searchTerm, setSearchTerm] = useState('');
@@ -45,15 +46,13 @@ export default function HeaderFormFilter() {
     }
 
     const formatDate = (dateString) => {
-        const date = new Date(dateString);
-
-        return date.toISOString().slice(0, 19);
+        return new Date(dateString);
     };
 
     const redirectTo = () => {
         setGuest(guestAdult + guestChild);
         if (city && selectedDates.length !== 0) {
-            navigate(`/apartment-filter?city=${selectedCity.id}&start_booking=${formatDate(selectedDates[0])}&end_booking=${formatDate(selectedDates[1])}&guests=${guestAdult+guestChild}`);
+            navigate(`/apartment-filter?city=${selectedCity.id}&start_booking=${formatDate(selectedDates[0])}&end_booking=${formatDate(selectedDates[1])}&guests=${guestAdult + guestChild}`);
         } else {
             navigate(`/apartment/city/${selectedCity.id}`);
         }

@@ -1,15 +1,17 @@
 import pytz
 from country.models import City
 from django.db.models import Q
+from django.http import JsonResponse
 from rest_framework import generics, status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from user.models import User
 
-from .models import Apartment, ApartmentType, ApartmentPhoto, GroupApartmentType, Booking, Rating, Comment
+from .models import Apartment, ApartmentType, ApartmentPhoto, GroupApartmentType, Booking, Rating, Comment, UserActivity
 from .serializers import ApartmentSerializer, ApartmentPhotoSerializer, ApartmentTypeSerializer, \
     GroupApartmentTypeSerializer, ApartmentCreateSerializer, CreateBookingSerializer, BookingSerializer, \
-    RatingSerializer, CommentSerializer, CreateCommentSerializer, CreateRatingSerializer
+    RatingSerializer, CommentSerializer, CreateCommentSerializer, CreateRatingSerializer, UserActivitySerializer, \
+    CreateUserActivitySerializer
 
 tz = pytz.timezone('Europe/Moscow')
 
@@ -331,7 +333,7 @@ class CreateCommentViewSet(generics.ListCreateAPIView):
 class DeleteBookingApartmentView(generics.DestroyAPIView):
     queryset = Booking.objects.all()
     serializer_class = BookingSerializer
-    permission_classes = (AllowAny, )
+    permission_classes = (AllowAny,)
 
     def get(self, request, *args, **kwargs):
         booking_id = self.kwargs.get('booking_id')
@@ -342,3 +344,134 @@ class DeleteBookingApartmentView(generics.DestroyAPIView):
         booking.delete()
 
         return Response({'message': 'Booking cancelled successfully.'}, status=204)
+
+
+class UserActivityViewSet(generics.ListCreateAPIView):
+    queryset = UserActivity.objects.all()
+    serializer_class = UserActivitySerializer
+    permission_classes = [IsAuthenticated]
+
+    # permission_classes = [AllowAny]
+
+    def list(self, request, *args, **kwargs):
+        user_id = self.kwargs.get('user_id')
+        if not user_id:
+            return Response({"error": "User is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        user = User.objects.get(pk=user_id)
+        user_activities = UserActivity.objects.filter(user=user)
+        serializer = self.get_serializer(user_activities, many=True)
+        return Response(serializer.data, status.HTTP_200_OK)
+
+
+class UpdateUserActivityViewSet(generics.UpdateAPIView):
+    queryset = UserActivity.objects.all()
+    serializer_class = UserActivitySerializer
+    permission_classes = (AllowAny,)
+    lookup_field = "id"
+
+
+class CreateUserActivityViewSet(generics.CreateAPIView):
+    queryset = UserActivity.objects.all()
+    serializer_class = CreateUserActivitySerializer
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        print(request.data)
+        serializer = CreateUserActivitySerializer(data=request.data)
+        if serializer.is_valid():
+            user_activity = serializer.save()
+            return Response(status=status.HTTP_201_CREATED)
+        print(serializer.errors)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UserActivityByApartViewSet(generics.CreateAPIView):
+    queryset = UserActivity.objects.all()
+    serializer_class = UserActivitySerializer
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        user_id = self.kwargs.get('user_id')
+        apart_id = self.kwargs.get('apart_id')
+        if not user_id:
+            return Response({"error": "User is required."}, status=status.HTTP_400_BAD_REQUEST)
+        if not apart_id:
+            return Response({"error": "Apartment is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        user = User.objects.get(pk=user_id)
+        apartment = Apartment.objects.get(pk=apart_id)
+        user_activities = UserActivity.objects.filter(user=user, apartment=apartment)
+        serializer = self.get_serializer(user_activities, many=True)
+        return Response(serializer.data, status.HTTP_200_OK)
+
+
+def filter_apartments(request):
+    # Получение фильтров из запроса
+    city_id = request.GET.get('city')
+    price_min = request.GET.get('price_min')
+    price_max = request.GET.get('price_max')
+    group_ids = request.GET.getlist('group_ids')  # Предполагается, что это список ID групп
+
+    # Начинаем с базового запроса
+    apartments = Apartment.objects.all()
+
+    # Фильтрация по диапазону цен
+    if price_min:
+        apartments = apartments.filter(price__gte=price_min)
+    if price_max:
+        apartments = apartments.filter(price__lte=price_max)
+
+    # Фильтрация по группам
+    if group_ids:
+        apartments = apartments.filter(type__group__id__in=group_ids)
+
+    if city_id:
+        apartments = apartments.filter(city__id=city_id)
+
+    # Возврат отфильтрованных апартаментов в формате JSON
+    apartments_data = [
+        {"id": apartment.id, "price": apartment.price, "type": apartment.type.type_name, "city": apartment.city.name}
+        for
+        apartment in
+        apartments]
+    return JsonResponse(apartments_data, safe=False)
+
+
+class ApartmentAllListViewList(generics.ListAPIView):
+    queryset = Apartment.objects.all()
+    serializer_class = ApartmentSerializer
+    permission_classes = (AllowAny,)
+
+
+class FilterApartmentsView(generics.ListAPIView):
+    serializer_class = ApartmentSerializer
+
+    def get_queryset(self):
+        # filter_serializer = ApartmentFilterSerializer(data=self.request.query_params)
+        # if not filter_serializer.is_valid():
+        #     raise ValidationError(filter_serializer.errors)
+        # queryset = Apartment.objects.all()
+
+        # Получение параметров фильтрации из запроса
+        global queryset
+        price_min = self.request.query_params.get('price_min')
+        price_max = self.request.query_params.get('price_max')
+        group_ids = self.request.query_params.getlist('group_ids')
+        city_id = self.request.query_params.get('city')
+
+        # Фильтрация по диапазону цен
+        if price_min is not None:
+            queryset = queryset.filter(price__gte=price_min)
+        if price_max is not None:
+            queryset = queryset.filter(price__lte=price_max)
+
+        # Фильтрация по группам
+        if group_ids:
+            queryset = queryset.filter(type__group__id__in=group_ids)
+
+        # Фильтрация по городу
+        if city_id is not None:
+            queryset = queryset.filter(city__id=city_id)
+
+        return queryset

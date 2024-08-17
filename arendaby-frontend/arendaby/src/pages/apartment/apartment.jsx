@@ -7,8 +7,9 @@ import Filter from "../../components/Filter/Filter";
 import ApartmentHeader from "../../components/apartment/ApartmentHeader";
 import ApartmentBody from "../../components/apartment/ApartmentBody";
 import Loader from "../../components/Loader/ClipLoader";
+import Footer from "../../components/Footer/Footer";
 
-export default function Apartment({isFilter, filteredList}) {
+export default function Apartment() {
     const [apartment, setApartmentList] = useState([]);
     const {id} = useParams();
     const [loading, setLoading] = useState(true);
@@ -20,13 +21,15 @@ export default function Apartment({isFilter, filteredList}) {
 
     const indexOfLastApartment = currentPage * apartPerPage;
     const indexOfFirstApartment = indexOfLastApartment - apartPerPage;
-    const currentApartments= apartment.slice(indexOfFirstApartment, indexOfLastApartment)
+    const currentApartments = apartment.slice(indexOfFirstApartment, indexOfLastApartment)
     const [refreshKey, setRefreshKey] = useState(0); // Ключ для принудительного обновления
+    const [isFiltered, setIsFiltered] = useState(false);
+    const [filterByParam, setFilterByParam] = useState([]);
+
 
     const handlePageChange = (number) => {
         setCurrentPage(number);
         setRefreshKey(refreshKey + 1); // Принудительное обновление
-
     };
 
     const fetchCity = async () => {
@@ -63,6 +66,11 @@ export default function Apartment({isFilter, filteredList}) {
         pageNumbers.push(i);
     }
 
+    const updateApartmentList = (filterResult) => {
+        setIsFiltered(true);
+        setApartmentList(filterResult);
+    }
+
     return (
         <Fragment>
             <Menu/>
@@ -77,8 +85,9 @@ export default function Apartment({isFilter, filteredList}) {
                             </div>
                         </div>
                         <div className="row">
-                            <Filter/>
-                            <ApartmentBody apartmentList={currentApartments} refreshKey={refreshKey}/>
+                            <Filter cityId={id}/>
+                            <ApartmentBody
+                                apartmentList={currentApartments} refreshKey={refreshKey}/>
                             <div className={"pagination-block"}>
                                 <ul className="pagination">
                                     <li className="page-item disabled">
@@ -101,6 +110,7 @@ export default function Apartment({isFilter, filteredList}) {
             ) : (
                 <Loader loading={loading}/>
             )}
+            <Footer/>
         </Fragment>
     )
 }

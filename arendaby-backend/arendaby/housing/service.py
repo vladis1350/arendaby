@@ -144,7 +144,7 @@ def check_apart_type(type_name):
         names.append(type_name[1].strip())
     elif len(type_name) != 0 and len(type_name) == 1:
         names.append(type_name[0].strip())
-    group_type = check_group_apart_type(' '.join(names))
+    group_type = check_group_apart_type(names[0])
     apart_type = ApartmentType.objects.filter(type_name__in=names).first()
     if apart_type is not None:
         return apart_type

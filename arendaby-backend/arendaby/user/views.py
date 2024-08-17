@@ -6,7 +6,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 from .models import UserProfile
-from .serializers import UserRegisterSerializer, UserTokenSerializer, UserProfileSerializer, UserSerializer
+from .serializers import UserTokenSerializer, UserProfileSerializer, UserSerializer
 
 
 class UsersListView(generics.ListAPIView):
@@ -27,14 +27,25 @@ class UsersProfileListView(generics.ListAPIView):
 
 
 class UserRegisterView(generics.CreateAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserRegisterSerializer
-    permission_classes = (AllowAny,)
+    # queryset = User.objects.all()
+    serializer_class = UserSerializer
+    # permission_classes = (AllowAny,)
 
     def post(self, request, *args, **kwargs):
-        serializer = UserRegisterSerializer(data=request.data)
+        serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
+            profile_data = {
+                'user': user.id,
+                'firstname': request.data.get('firstname'),
+                'secondname': request.data.get('secondname'),
+                'image': request.data.get('photo'),
+                'phone': request.data.get('phone'),
+            }
+            profile_serializer = UserProfileSerializer(data=profile_data)
+            profile_serializer.is_valid(raise_exception=True)
+            profile_serializer.save()
+
             refresh = RefreshToken.for_user(user)
             response_data = {
                 'refresh': str(refresh),

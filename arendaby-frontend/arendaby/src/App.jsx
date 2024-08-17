@@ -21,7 +21,7 @@ import IdeaPage from "./pages/IdeasPage/IdeaPage";
 
 function Logout() {
     localStorage.clear()
-    return <Navigate to="/login"/>
+    return <Navigate to="/"/>
 }
 
 export default function App() {
@@ -42,7 +42,7 @@ export default function App() {
                     }
                 } catch (error) {
                     if (error.response && error.response.status === 401) {
-                        // dispatch(logout());
+                        dispatch(logout());
                         return <Navigate to="/login"/>;
                     }
                 }

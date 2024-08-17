@@ -18,8 +18,23 @@ export const getUser = async (id) =>
 export const deleteBooking = async (id) =>
     api.get(`/api/apartment/booking/delete/${id}`);
 
-export const authUser = async (username, email, password) =>
-    api.post("/api/user/register/", {username, email, password});
+export const getUserActivity = async (userId) =>
+    api.get(`/api/user-activities/${userId}`);
+
+export const checkUserActivity = async  (userId, apart_id) =>
+    api.get(`/api/user-activity/${userId}/${apart_id}`);
+
+export const saveUserActivity = async (data) =>
+    api.post(`/api/user-activities/create/`, data);
+
+export const updateUserFavorite = async (id, data) =>
+    api.patch(`/api/user-activities/update/${id}`, data);
+
+export const authUser = async (userData) =>
+    api.post("/api/user/register/", userData);
+
+export const filterApartByParam = async (selectedGroups, priceRange) =>
+    api.post(`/api/apartment/filter-by-param/`, selectedGroups, priceRange);
 
 export const getCity = async (city_id) =>
     api.get(`/api/city/${city_id}`);
@@ -88,3 +103,6 @@ export const getBookedDates = async (apart_id) =>
 
 export const getApartment = async (city) =>
     api.get(`/api/apartment/city/${city}`);
+
+export const getAllApartment = async () =>
+    api.get(`/api/apartment/cities/`);

@@ -5,6 +5,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import Loader from "../../components/Loader/ClipLoader";
+import "./BookingForm.css";
 
 const BookingForm = ({apart_id, selectedDates}) => {
     const [loading, setLoading] = useState(true);
@@ -72,8 +73,8 @@ const BookingForm = ({apart_id, selectedDates}) => {
 
     return (
         <div>
-            <h1>Забронировать даты</h1>
-            <div>
+            <h1 className={"booking-from-title"}>Забронировать даты</h1>
+            <div className={"booking-calendar"}>
                 <Calendar
                     onChange={handleDateChange}
                     value={dateRange}

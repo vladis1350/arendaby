@@ -19,6 +19,7 @@
 
 .input-wrapper-guests {
     user-select: none;
+    padding-left: 20px;
     background: #fff;
     color: #0e1e02;
     cursor: pointer;
@@ -33,6 +34,13 @@
 .guests {
     text-align: left;
     width: 200px;
+}
+
+.price {
+    padding: 10px 20px;
+    font-style: italic;
+    font-size: 16px;
+
 }
 
 .row > .guests {
@@ -107,7 +115,7 @@
     background-color: #fcfcfd;
     transition: background-color .2s;
     white-space: nowrap;
-    width: 130px;
+    width: 150px;
     z-index: 122;
 }
 
@@ -116,7 +124,7 @@
     border: none;
     z-index: 111;
     outline: none;
-    width: 110px;
+    width: 120px;
 }
 
 .search-result-focused {

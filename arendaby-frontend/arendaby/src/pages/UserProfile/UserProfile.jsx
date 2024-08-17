@@ -7,6 +7,7 @@ import {useNavigate} from "react-router-dom";
 import {login, logout} from "../../Redux/authReducer";
 import {showMessageInfo} from "../../Redux/messagesReducer";
 import UserItemReservation from "../../components/UserItemReservation/UserItemReservation";
+import UserActivity from "../../components/user-activity/UserActivity";
 
 export default function UserProfile() {
     const [userData, setUserData] = useState(null)
@@ -29,9 +30,17 @@ export default function UserProfile() {
     const [isBookingList, setIsBookingList] = useState(false);
 
     const fetchUserBooking = async () => {
-        const response = await getUserBooking(userId);
-        if (response.status === 200) {
-            setBooking(response.data);
+        if (token) {
+            try {
+                const response = await getUserBooking(userId);
+                if (response.status === 200) {
+                    setBooking(response.data);
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        } else {
+            navigate("/login")
         }
     }
 
@@ -99,10 +108,14 @@ export default function UserProfile() {
         fetchUserBooking();
     }, [isLoggedIn, userIsUpdated]);
 
+    const userActivityStyle = {
+        display: "flex"
+    }
+
     return (
         <Fragment>
             <Navbar/>
-            <div className="container">
+            <div className="container-xl">
                 <div className="row">
                     <div className="col-3 profile-left-block">
                         <div className="avatar-block">
@@ -111,19 +124,22 @@ export default function UserProfile() {
                         <span className="fio"><strong>{formData.firstname} {formData.secondname}</strong></span>
                         <br/>
                         <span className="username">{formData.username}</span>
+                        <br/>
                         <button className="btn-fill-profile">Заполнить профиль</button>
                     </div>
                     <div className="col-6">
                         <div className="row">
                             <div className="col profile-center-block">
-                                <p><strong>Пол:</strong> {formData.gender}</p>
-                                <p><strong>Username:</strong> {formData.username}</p>
+                                {/*<p><strong>Пол:</strong> {formData.gender}</p>*/}
+                                <p><strong>Имя пользователя:</strong> {formData.username}</p>
                                 <p><strong>Email:</strong> {formData.email}</p>
                                 <p><strong>Телефон:</strong> {formData.phone}</p>
-                                <p onClick={toggleBlock} className={"open-close-user-reservation"}>{isBookingList ? 'Скрыть список' : 'Показать список'}</p>
+                                <p onClick={toggleBlock}
+                                   className={"open-close-user-reservation"}>{isBookingList ? 'Скрыть список' : 'Мои бронирования'}</p>
                                 <div className={`user-reservations-block ${isBookingList ? 'open' : 'closed'}`}>
                                     {booking ? (booking.map(item => (
-                                        <UserItemReservation key={item.id} reservation={item} onDelete={handleDeleteReservation}/>
+                                        <UserItemReservation key={item.id} reservation={item}
+                                                             onDelete={handleDeleteReservation}/>
                                     ))) : (
                                         <div><h4>У вас нет не одной брони!</h4></div>
                                     )}
@@ -132,7 +148,7 @@ export default function UserProfile() {
                         </div>
                     </div>
                     <div className="col-3 profile-right-block">
-                        <span>Right block</span>
+                        <UserActivity style={userActivityStyle}/>
                     </div>
                 </div>
             </div>

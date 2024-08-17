@@ -1,19 +1,27 @@
 import React, {Fragment, useEffect, useState} from 'react';
 import Navbar from "../../components/navbar/navbar";
 import {useNavigate, useParams} from "react-router-dom";
-import {api, createBooking, createComment, getRating} from "../../services/Api";
+import {
+    api,
+    checkUserActivity,
+    createBooking,
+    createComment,
+    getRating,
+    saveUserActivity,
+    updateUserFavorite
+} from "../../services/Api";
 import {useSelector} from "react-redux";
-import {FaCalendar, FaChevronLeft, FaChevronRight, FaStar} from 'react-icons/fa';
+import {FaCalendar, FaChevronLeft, FaChevronRight, FaHeart, FaRegHeart, FaRubleSign, FaStar} from 'react-icons/fa';
 import './apartment.css';
 import Loader from "../../components/Loader/ClipLoader";
 import BookingForm from "../../components/BookingCalendar/BookingForm";
 import PopupComponent from "../../components/PopupComponent/PopupComponent";
 import Rating from "../../components/rating/Rating";
-import {format} from 'date-fns';
+import {differenceInDays, format} from 'date-fns';
 import {ReadMore} from "./ReadMore";
 
 export default function ViewApartmentDetail() {
-    const {isLoggedIn, userId} = useSelector((state) => state.auth);
+    const {isLoggedIn, userId, token} = useSelector((state) => state.auth);
     const [loading, setLoading] = useState(false);
     const {apart_id} = useParams();
     const [apartment, setApartment] = useState();
@@ -30,6 +38,9 @@ export default function ViewApartmentDetail() {
     const [rating, setRating] = useState(0);
     const [start_booking, setStartBooking] = useState();
     const [end_booking, setEndBooking] = useState();
+    const [days, setDays] = useState(0);
+    const [isVisited, setIsVisited] = useState(true);
+    const [isFavorite, setIsFavorite] = useState(false);
 
     const handleOverlayClick = (e) => {
         if (e.target.classList.contains('overlay')) {
@@ -40,6 +51,7 @@ export default function ViewApartmentDetail() {
     const handleSelectedDates = (start, end) => {
         setStartBooking(start);
         setEndBooking(end);
+        setDays(differenceInDays(end, start));
     }
 
     useEffect(() => {
@@ -48,13 +60,65 @@ export default function ViewApartmentDetail() {
         checkUserRating();
 
         const intervalId = setInterval(() => {
+            addApartmentToViewed();
             fetchApartmentDetail();
             checkUserRating();
-        }, 10000); // 10000 мс = 10 секунд
+        }, 10000);
 
         // Очищаем интервал при размонтировании компонента
         return () => clearInterval(intervalId);
-    }, [rating]);
+    }, [rating, isVisited, isFavorite]);
+
+    const addApartmentToViewed = async () => {
+        const token = localStorage.getItem('token');
+        if (token) {
+            try {
+                const response_check = await checkUserActivity(userId, apart_id);
+                if (response_check.status === 200) {
+                    if (response_check.data.length === 0) {
+                        const formDataToSend = new FormData();
+                        formDataToSend.append('user', userId);
+                        formDataToSend.append('apartment', apart_id);
+                        formDataToSend.append('is_favorite', isFavorite);
+                        const response = await saveUserActivity(formDataToSend);
+                        if (response.status === 201) {
+                            setIsVisited(true); // Устанавливаем, что пользователь просмотрел это
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Ошибка при добавлении в список просмотренных:', error);
+            }
+        }
+    };
+
+    const updateApartmentToViewed = async () => {
+        const token = localStorage.getItem('token');
+        if (token) {
+            try {
+                const response_check = await checkUserActivity(userId, apart_id);
+                if (response_check.status === 200) {
+                    if (response_check.data.length !== 0) {
+                        const formDataToSend = new FormData();
+                        formDataToSend.append('user', userId);
+                        formDataToSend.append('apartment', apart_id);
+                        if (response_check.data[0].is_favorite === false) {
+                            formDataToSend.append('is_favorite', true);
+                            setIsFavorite(true);
+                        } else if (response_check.data[0].is_favorite === true) {
+                            formDataToSend.append('is_favorite', false);
+                            setIsFavorite(false);
+                        }
+                        const response = await updateUserFavorite(response_check.data[0].id, formDataToSend);
+                    }
+                }
+            } catch (error) {
+                console.error('Ошибка при добавлении в список просмотренных:', error);
+            }
+        } else {
+            navigate("/login");
+        }
+    };
 
     const changeImage = (index) => {
         setCurrentImage(index);
@@ -62,6 +126,12 @@ export default function ViewApartmentDetail() {
 
     const checkUserRating = async () => {
         try {
+            const response_check = await checkUserActivity(userId, apart_id);
+            if (response_check.status === 200) {
+                if (response_check.data.length !== 0) {
+                    setIsFavorite(response_check.data[0].is_favorite);
+                }
+            }
             const response = await getRating(apart_id, userId);
             if (response.status === 200) {
                 setRating(response.data.rating)
@@ -150,16 +220,21 @@ export default function ViewApartmentDetail() {
     };
 
     const saveComment = async () => {
-        if (isLoggedIn) {
-            const formDataToSend = new FormData();
-            formDataToSend.append('client', userId);
-            formDataToSend.append('apartment', apart_id);
-            formDataToSend.append('comment', userComment);
-            const response = await createComment(formDataToSend);
-            if (response.status === 201) {
-                setCommentMessage("Комментарий успешно добавлен!");
-                fetchApartmentDetail();
-            } else {
+        if (token) {
+            try {
+                const formDataToSend = new FormData();
+                formDataToSend.append('client', userId);
+                formDataToSend.append('apartment', apart_id);
+                formDataToSend.append('comment', userComment);
+                const response = await createComment(formDataToSend);
+                if (response.status === 201) {
+                    setCommentMessage("Комментарий успешно добавлен!");
+                    fetchApartmentDetail();
+                } else {
+                    setCommentMessage("Комментарий не был добавлен!");
+                }
+            } catch (error) {
+                console.log(error);
                 setCommentMessage("Комментарий не был добавлен!");
             }
         } else {
@@ -168,20 +243,24 @@ export default function ViewApartmentDetail() {
     }
 
     const toBooking = async () => {
-        alert(start_booking)
-        alert(end_booking)
-        if (isLoggedIn) {
-            const formDataToSend = new FormData();
-            formDataToSend.append('client', userId);
-            formDataToSend.append('apartment', apart_id);
-            formDataToSend.append('start_booking', formatDate(start_booking));
-            formDataToSend.append('end_booking', formatDate(end_booking));
-            formDataToSend.append('isBooking', false);
-            const response = await createBooking(formDataToSend);
-            if (response.status === 201) {
-                alert("Бронь создана!");
-            } else {
-                alert("Что то пошло не так!");
+        if (token) {
+            try {
+                const formDataToSend = new FormData();
+                formDataToSend.append('client', userId);
+                formDataToSend.append('apartment', apart_id);
+                formDataToSend.append('start_booking', formatDate(start_booking));
+                formDataToSend.append('end_booking', formatDate(end_booking));
+                formDataToSend.append('isBooking', false);
+                const response = await createBooking(formDataToSend);
+                if (response.status === 201) {
+                    alert("Бронь создана!");
+                    navigate("/profile");
+                } else {
+                    alert("Ошибка бронирования, попробуйте позже!");
+                }
+            } catch (error) {
+                console.log(error);
+                alert("Ошибка бронирования, попробуйте позже!");
             }
         } else {
             navigate("/login");
@@ -192,17 +271,41 @@ export default function ViewApartmentDetail() {
         setUserComment(e.target.value);
     }
 
+    const calculate_discount = () => {
+        if (days < 4) {
+            return apartment.price;
+        } else if (days >= 4 && days <= 7) {
+            return apartment.price * 0.90;
+        } else if (days >= 8 && days <= 14) {
+            return apartment.price * 0.85;
+        } else {
+            return apartment.price * 0.80;
+        }
+    }
+
     return (
         <Fragment>
             <Navbar/>
             {apartment ? (
-                <div className={"container"} onClick={handleOverlayClick}>
+                <div className={"container-xl"} onClick={handleOverlayClick}>
                     <div className={"row"}>
                         <div className={"col-8"}>
                             <div className="slider-container">
                                 <div className={"header_view-apart"}>
                                     <h3><strong>{apartment.name}</strong></h3>
-                                    <p>{apartment.street_name}, {apartment.number_house}, {apartment.number_block !== '-' ? apartment.number_block : ''}</p>
+                                    <p className={"address-detail"}>
+                                        <strong><FaStar
+                                            style={{color: "#FFD700"}}/> {apartment.rating.length === 0 ? 0 : apartment.rating.reduce((acc, rating) => acc + rating.rating, 0)}
+                                        </strong>&nbsp;&nbsp;&nbsp;
+                                        <span>{apartment.comment.length} {declineComment(apartment.comment.length)}</span>&nbsp;&nbsp;&nbsp;
+                                        {apartment.street_name}, {apartment.number_house}, {apartment.number_block !== '-' ? apartment.number_block : ''}
+                                    </p>
+                                </div>
+                                <div className={"favorite-block"}>
+                                    <span onClick={() => updateApartmentToViewed()}
+                                          className={"favorite"}>
+                                        {isFavorite ? <FaHeart size={22} style={{color: "red"}}/> : (
+                                            <FaRegHeart/>)}&nbsp;&nbsp;В избранное</span>
                                 </div>
                                 <div className={"main-image-block"} onMouseEnter={handleMouseEnter}
                                      onMouseLeave={handleMouseLeave}
@@ -245,7 +348,7 @@ export default function ViewApartmentDetail() {
                                         {/*<div className={"col-2"}><span>Комнат : {apartment.count_room}</span></div>*/}
                                     </div>
                                     <div className={"row"}>
-                                        <div className={"col"}>
+                                        <div className={"col-8"}>
                                             <h5><strong>Спальных мест: {apartment.sleeping_places}</strong></h5>
                                             <div>
                                                 <ReadMore text={apartment.descriptions} maxLength={500}/>
@@ -277,6 +380,24 @@ export default function ViewApartmentDetail() {
                                                                        count_guest={apartment.sleeping_places}/>)}
                                     </div>
                                 </div>
+                                <div className={"row"}>
+                                    <div className={"col-8"}>
+                                        <p className={"price"}>Цена за сутки:</p>
+                                    </div>
+                                    <div className={"col-4"}>
+                                        <p className={"price"}>{apartment.price}<FaRubleSign/></p>
+                                    </div>
+                                </div>
+                                <div className={"row"}>
+                                    <div className={"col-8"}>
+                                        <p className={"price"}>Цена
+                                            за {days} дней с учетом скидки:</p>
+                                    </div>
+                                    <div className={"col-4"}>
+                                        <p className={"price"}>{Math.round(calculate_discount() * days * 100) / 100}<FaRubleSign/>
+                                        </p>
+                                    </div>
+                                </div>
                                 <div className={"row row-booking"}>
                                     <div className={"col"}>
                                         <button type="button" onClick={toBooking}
@@ -306,12 +427,6 @@ export default function ViewApartmentDetail() {
                         <div className={"col-8 comment-block"}>
                             <div className={"row"}>
                                 <div className={"col"}>
-                                    <div className={"rating-comment"}>
-                                        <h4><strong>Оценка гостей &nbsp;&nbsp;&nbsp;<FaStar
-                                            style={{color: "#FFD700"}}/> {apartment.rating.length === 0 ? 0 : apartment.rating.reduce((acc, rating) => acc + rating.rating, 0)}
-                                        </strong></h4>
-                                        <span>{apartment.comment.length} {declineComment(apartment.comment.length)}</span>
-                                    </div>
                                     <Rating apartmentId={apart_id} userRating={rating}/>
                                     <hr/>
                                     <h4>ОТЗЫВЫ</h4>
